@@ -63,36 +63,75 @@ function init(){
 	}
 
     function whenItsLoaded(){
+			$(".missions-list").empty()
             $(".missions-list").addClass("row");
-            $(".missions-list > div.mission").removeClass("row").addClass("col-xs-3");
-            $(".missions-list > div.mission > div").removeClass("col-sm-6");
+//
+            var missionsElement = $('div.list');
+            var missionScope = w.$scope(missionsElement);
+            missionScope.missions = w.$filter("orderBy")(missionScope.missions, 'definition.name');
 
-            $(".missions-list div.buttons > div").removeClass("row");
-            $(".missions-list div.buttons button").removeClass("col-sm-3");
-            $(".missions-list div.buttons div.button-description").remove();
-
-            var missionsList = $('div.list');
-            var newMissionPanel = "<div><div ng-repeat='mission in missions'>{{mission.definition.name}}</div></div>";
-            var missions = w.$scope(missionsList);
-            //w.$scope(missionsList).sortedmissions = w.$filter("orderBy")(missions, 'definition.name');
-
-        w.$injector.invoke(function($compile) {
-
-           // Pass our fragment content to $compile,
-           // and call the function that $compile returns with the scope.
-           var compiledContent = $compile(newMissionPanel)(missions);
-
-           // Put the output of the compilation in to the page using jQuery
-           $('div', missionsList).after(compiledContent);
+    	    w.$injector.invoke(function($compile) {
+				for (var i = 0; i < missionScope.missions.length; i++){
+					// Pass our fragment content to $compile,
+				   // and call the function that $compile returns with the scope.
+				   var mission = missionScope.missions[i];
+				   var newMissionPanel = "<div class='mission col-xs-3 mission-list-item-" + mission.missionListState.toLowerCase() + "'>";
+				   newMissionPanel += "<img class='mission-image' src='" + mission.definition.logo_url + "'>";
+				   newMissionPanel += "<span class='name mission-title-" + mission.missionListState.toLowerCase() + "'>" + mission.definition.name + "</span><br />";
+				   newMissionPanel += "<i class='name mission-title-" + mission.missionListState.toLowerCase() + " glyphicon glyphicon-";
+				   switch (mission.missionListState){
+					    case "DRAFT":
+						newMissionPanel += "wrench' title=''";
+						break;
+						case "DRAFT_OF_PUBLISHED_MISSION":
+						newMissionPanel += "wrench' title=''";
+						break;
+						case "PUBLISHED":
+						newMissionPanel += "ok' title=''";
+						break;
+						case "SUBMITTED":
+						newMissionPanel += "send' title=''";
+						break;
+						case "SUBMITTED_AND_PUBLISHED":
+						newMissionPanel += "send' title=''";
+						break;
+					   }
+				   newMissionPanel += "></i>";
+				   newMissionPanel += "<span class='name mission-time-"+mission.missionListState.toLowerCase()+"'>"+missionScope.getInfoTime(mission)+"</span>";
+				   newMissionPanel += "<div class='dropdown'><button class='button action-button dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>Action <span class='caret'></span></button>";
+				   newMissionPanel += "<ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>"
+				   newMissionPanel += "<li><a role='button' ng-click='button1Clicked(missions["+i+"])'>" + missionScope.getButton1Title(mission) + "</a></li>";
+				   newMissionPanel += "<li><a role='button' ng-click='button2Clicked(missions["+i+"])'>" + missionScope.getButton2Title(mission) + "</a></li>";
+				   newMissionPanel += "</ul></div>"
+				   newMissionPanel += "<table class='table table-bordered'><tr>";
+				   newMissionPanel += "<td>";
+				   switch (mission.definition.mission_type) {
+					case "SEQUENTIAL":
+						newMissionPanel += "Sequential";
+						break;
+					case "HIDDEN_SEQUENTIAL":
+						newMissionPanel += "Sequential: Hidden";
+						break;
+					case "NON_SEQUENTIAL":
+						newMissionPanel += "Any Order";
+						break;
+					}
+				   mission.definition.mission_type 
+				   newMissionPanel += "</td>";
+				   if (mission.stats){
+					   newMissionPanel += "<td>" + missionScope.getMissionTimeString(mission) + "</td>";
+					   newMissionPanel += "<td>" + missionScope.getMissionRatingString(mission) + "</td>";
+					   newMissionPanel += "<td>" + mission.stats.num_completed + "</td>";					   
+					}
+				   newMissionPanel += "</tr></table>";
+				   newMissionPanel += "</div>";
+				   var compiledContent = $compile(newMissionPanel)(missionScope);
+		
+				   // Put the output of the compilation in to the page using jQuery
+				   $('.missions-list').append(compiledContent);								   
+				}
 
    });
-            //var compiledContent = w.$compile(newMissionPanel)(missions);
-            //$(missionsList).html(compiledContent);
-            // w.$injector.invoke(function($compile) {
-            //     // Get the AngularJS scope we want our fragment to see
-            //     var compiledContent = $compile(newMissionPanel)(missions);
-            //     $(missionsList).html(compiledContent);
-            // });
     }
 }
 
