@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         IMATTC
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2.0
 // @description  A usability overhaul for the Ingress Mission Authoring Tool
 // @author       You
 // @match        https://mission-author-dot-betaspike.appspot.com/
