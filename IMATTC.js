@@ -15,7 +15,15 @@ $(function () {
     TimeConversionConstants.HOUR_GRANULARITY_MINUTES = 15;
     TimeConversionConstants.DAY_GRANULARITY_HOURS = 12;
 
-    var newCssRules = "<style>.missions-list .mission {    border: 5px solid black;    margin: 0;    position: relative;    height: 250px;    padding: 5px;    display: block;}.mission-list-item-published {    background-image: none;    background: #21696b;}.mission-list-item-draft {    background-image: none;    background: #4c3b1f;}.mission-list-item-draft_of_published_mission {    background-image: none;    background: #21696b;}.mission-list-item-submitted {    background-image: none;    background: #4c3b1f;}.mission-list-item-disabled { background-image: none; background: #6b6b6b;} .mission-list-item-submitted_and_published {    background-image: none;    background: #21696b;}</style>";
+    var newCssRules = "<style>"
+	newCssRules += ".missions-list .mission 					{border: 5px solid black; margin: 0; position: relative; height: 250px; padding: 5px; display: block;}";
+	newCssRules += ".mission-list-item-published 				{background-image: none; background: #21696b;}";
+	newCssRules += ".mission-list-item-draft 					{background-image: none; background: #4c3b1f;}";
+	newCssRules += ".mission-list-item-draft_of_published_mission {background-image: none; background: #21696b;}";
+	newCssRules += ".mission-list-item-submitted				{background-image: none; background: #4c3b1f;}";
+	newCssRules += ".mission-list-item-disabled 				{background-image: none; background: #6b6b6b;}";
+	newCssRules += ".mission-list-item-submitted_and_published	{background-image: none; background: #21696b;}";
+	newCssRules += "</style>";
     $("head").append( newCssRules );
 
 });
@@ -75,29 +83,30 @@ function init(){
 					// Pass our fragment content to $compile,
 				   // and call the function that $compile returns with the scope.
 				   var mission = missionScope.missions[i];
-				   var newMissionPanel = "<div class='mission col-xs-3 mission-list-item-" + mission.missionListState.toLowerCase() + "'>";
+				   var missionState = mission.missionListState.toLowerCase();
+				   var newMissionPanel = "<div class='mission col-sm-6 col-md-3 mission-list-item-" + missionState + "'>";
 				   newMissionPanel += "<img class='mission-image' src='" + mission.definition.logo_url + "'>";
-				   newMissionPanel += "<span class='name mission-title-" + mission.missionListState.toLowerCase() + "'>" + mission.definition.name + "</span><br />";
-				   newMissionPanel += "<i class='name mission-title-" + mission.missionListState.toLowerCase() + " glyphicon glyphicon-";
-				   switch (mission.missionListState){
-					    case "DRAFT":
-						newMissionPanel += "wrench' title=''";
+				   newMissionPanel += "<span class='name mission-title-" + missionState + "'>" + mission.definition.name + "</span><br />";
+				   newMissionPanel += "<i class='name mission-title-" + missionState + " glyphicon glyphicon-";
+				   switch (missionState){
+					    case "draft":
+						newMissionPanel += "wrench' title='Unpublished draft mission'";
 						break;
-						case "DRAFT_OF_PUBLISHED_MISSION":
-						newMissionPanel += "wrench' title=''";
+						case "draft_of_published_mission":
+						newMissionPanel += "wrench' title='Published mission with unpublished edits'";
 						break;
-						case "PUBLISHED":
-						newMissionPanel += "ok' title=''";
+						case "published":
+						newMissionPanel += "ok' title='Published mission'";
 						break;
-						case "SUBMITTED":
-						newMissionPanel += "send' title=''";
+						case "submitted":
+						newMissionPanel += "send' title='Unpublished mission under review'";
 						break;
-						case "SUBMITTED_AND_PUBLISHED":
-						newMissionPanel += "send' title=''";
+						case "submiteed_and_published":
+						newMissionPanel += "send' title='Published mission, changes under review'";
 						break;
 					   }
 				   newMissionPanel += "></i>";
-				   newMissionPanel += "<span class='name mission-time-"+mission.missionListState.toLowerCase()+"'>"+missionScope.getInfoTime(mission)+"</span>";
+				   newMissionPanel += "<span class='name mission-time-" + missionState + "'>"+missionScope.getInfoTime(mission)+"</span>";
 				   newMissionPanel += "<div class='dropdown'><button class='button action-button dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>Action <span class='caret'></span></button>";
 				   newMissionPanel += "<ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>"
 				   newMissionPanel += "<li><a role='button' ng-click='button1Clicked(missions["+i+"])'>" + missionScope.getButton1Title(mission) + "</a></li>";
