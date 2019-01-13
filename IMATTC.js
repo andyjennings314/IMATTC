@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name         IMATTC
 // @namespace    http://tampermonkey.net/
-// @version      0.2.1
+// @version      0.2.2
 // @description  A usability overhaul for the Ingress Mission Authoring Tool
 // @author       You
 // @match        https://mission-author-dot-betaspike.appspot.com/
+// @match        https://mission-author-dot-betaspike.appspot.com/edit*
 // @grant        none
 // ==/UserScript==
 
@@ -16,6 +17,7 @@ $(function () {
     TimeConversionConstants.DAY_GRANULARITY_HOURS = 12;
 
     var newCssRules = "<style>"
+	newCssRules += ".navbar-my-missions							{cursor: pointer;}";
 	newCssRules += ".missions-list .mission 					{border: 5px solid black; margin: 0; position: relative; height: 245px; padding: 5px; display: block;}";
 	newCssRules += ".list .mission .action-button 				{width: 100%; min-width: initial; max-width: initial;}";
 	newCssRules += ".mission-header-container					{display: flex; align-items: stretch;}";
@@ -45,7 +47,7 @@ function init(){
 	const initWatcher = setInterval(() => {
 		if (tryNumber === 0) {
             clearInterval(initWatcher);
-			alert("fuck");
+			alert("IMATTC initialisation failed, please refresh the page");
 		}
 		if (w.angular && $(".missions-list").length > 0) {
 			let err = false;
@@ -76,14 +78,24 @@ function init(){
 		w.$rootScope = w.$app.scope();
         w.$filter = w.$app.injector().get('$filter');
         w.$compile = w.$app.injector().get('$compile');
+		w.$location = w.$app.injector().get('$location');
 
 		w.$scope = element => w.angular.element(element).scope();
 	}
 
     function whenItsLoaded(){
+			var headerElement = $(".navbar-my-missions");
+			var headerScope = w.$scope(headerElement);
+			headerScope.goBackHome = function(){
+				w.$location.path('/');
+				init();
+			};
+			
+			var compiledHeader = $compile('<a class="navbar-my-missions navbar-brand" ng-click="goBackHome()">' + headerScope.headerText + '</a>')(headerScope);
+			headerElement.replaceWith(compiledHeader);	
+		
 			$(".missions-list").empty()
             $(".missions-list").addClass("row");
-//
             var missionsElement = $('div.list');
             var missionScope = w.$scope(missionsElement);
             missionScope.missions = w.$filter("orderBy")(missionScope.missions, 'definition.name');
