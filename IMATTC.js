@@ -79,21 +79,15 @@ function init(){
         w.$filter = w.$app.injector().get('$filter');
         w.$compile = w.$app.injector().get('$compile');
 		w.$location = w.$app.injector().get('$location');
+		
+		w.$rootScope.$on('$routeChangeStart', function (next, last) {
+		   init();
+		});
 
 		w.$scope = element => w.angular.element(element).scope();
 	}
 
     function whenItsLoaded(){
-			var headerElement = $(".navbar-my-missions");
-			var headerScope = w.$scope(headerElement);
-			headerScope.goBackHome = function(){
-				w.$location.path('/');
-				init();
-			};
-			
-			var compiledHeader = $compile('<a class="navbar-my-missions navbar-brand" ng-click="goBackHome()">' + headerScope.headerText + '</a>')(headerScope);
-			headerElement.replaceWith(compiledHeader);	
-		
 			$(".missions-list").empty()
             $(".missions-list").addClass("row");
             var missionsElement = $('div.list');
