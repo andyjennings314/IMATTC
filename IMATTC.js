@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         IMATTC
 // @namespace    http://tampermonkey.net/
-// @version      0.2.2
+// @version      0.3.1
 // @description  A usability overhaul for the Ingress Mission Authoring Tool
 // @author       You
 // @match        https://mission-author-dot-betaspike.appspot.com/
@@ -24,14 +24,23 @@ $(function () {
 	newCssRules += ".mission-header-container div:nth-of-type(1){padding-right: 5px; width: 60px}";
 	newCssRules += ".mission-header-container div:nth-of-type(2){width: calc(100% - 115px)}";
 	newCssRules += ".mission-header-container div:nth-of-type(3){padding-left: 5px; width: 45px}";
+	newCssRules += ".action-button .caret 						{border-bottom-color: #5afbea;}"
 	newCssRules += ".mission .name.glyphicon 					{font-size: 40px;}"
 	newCssRules += ".mission .name:not(.glyphicon) 				{text-align: center; display: block;}"
-	newCssRules += ".mission-list-item-published 				{background-image: none; background: #21696b;}";
-	newCssRules += ".mission-list-item-draft 					{background-image: none; background: #4c3b1f;}";
-	newCssRules += ".mission-list-item-draft_of_published_mission {background-image: none; background: #21696b;}";
-	newCssRules += ".mission-list-item-submitted				{background-image: none; background: #4c3b1f;}";
-	newCssRules += ".mission-list-item-disabled 				{background-image: none; background: #6b6b6b;}";
-	newCssRules += ".mission-list-item-submitted_and_published	{background-image: none; background: #21696b;}";
+	
+	newCssRules += ".mission-list-item-published 				{background-image: none; background: darkgreen;color: lightgreen;}";
+	newCssRules += ".list .mission .mission-title-published 	{color: lightgreen;}";
+	newCssRules += ".mission-list-item-draft 					{background-image: none; background: #a42e12;color: #f7ba5f;}";
+	newCssRules += ".list .mission .mission-title-draft 	{color: #f7ba5f;}";
+	newCssRules += ".mission-list-item-draft_of_published_mission {background-image: none; background: olive;color: greenyellow;}";
+	newCssRules += ".list .mission .mission-title-draft_of_published_mission 	{color: greenyellow;}";
+	newCssRules += ".mission-list-item-submitted				{background-image: none; background: darkgoldenrod;color: gold;}";
+	newCssRules += ".list .mission .mission-title-submitted 	{color: gold;}";
+	newCssRules += ".mission-list-item-disabled 				{background-image: none; background: #6b6b6b;color: red;}";
+	newCssRules += ".list .mission .mission-title-disabled	 	{color: red;}";
+	newCssRules += ".mission-list-item-submitted_and_published	{background-image: none; background: olivedrab;color: springgreen;}";
+	newCssRules += ".list .mission .mission-title-submitted_and_published 	{color: springgreen;}";
+	
 	newCssRules += ".dropup 									{position: relative;}";
 	newCssRules += ".dropup .dropdown-menu						{top: initial; bottom: 30px; left: 0; right: 0; text-align: center;}";
 	newCssRules += ".dropdown-menu > li > a 					{cursor: pointer;}";
