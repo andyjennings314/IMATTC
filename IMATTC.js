@@ -1,12 +1,13 @@
 // ==UserScript==
 // @name         IMATTC
-// @namespace    http://tampermonkey.net/
-// @version      0.3.3
+// @version      0.3.4
 // @description  A usability overhaul for the Ingress Mission Authoring Tool
-// @author       You
+// @author       @Chyld314
 // @match        https://mission-author-dot-betaspike.appspot.com/
 // @match        https://mission-author-dot-betaspike.appspot.com/edit*
 // @grant        none
+// @downloadURL	 https://github.com/andyjennings314/IMATTC/raw/master/IMATTC.js
+// @updateURL	 https://github.com/andyjennings314/IMATTC/raw/master/IMATTC.js
 // ==/UserScript==
 
 $(function () {
@@ -30,8 +31,8 @@ $(function () {
 	newCssRules += ".mission-header-container div:nth-of-type(2){width: calc(100% - 115px)}";
 	newCssRules += ".mission-header-container div:nth-of-type(3){padding-left: 5px; width: 45px}";
 	newCssRules += ".button, button 							{background-image: none;}";
-	newCssRules += ".mission .name.glyphicon 					{font-size: 40px;}"
-	newCssRules += ".mission .name:not(.glyphicon) 				{text-align: center; display: block;}"
+	newCssRules += ".mission .name.glyphicon 					{font-size: 40px;}";
+	newCssRules += ".mission .name:not(.glyphicon) 				{text-align: center; display: block;}";
 	
 	newCssRules += ".mission-list-item-published 				{background-image: none; background: darkgreen;color: lightgreen;}";
 	newCssRules += ".list .mission .mission-title-published 	{color: lightgreen;}";
@@ -78,6 +79,10 @@ $(function () {
 	newCssRules += ".dropup 									{position: relative;}";
 	newCssRules += ".dropup .dropdown-menu						{top: initial; bottom: 30px; left: 0; right: 0; text-align: center;}";
 	newCssRules += ".dropdown-menu > li > a 					{cursor: pointer;}";
+	newCssRules += ".editor .view 								{width: initial;height: initial;text-align: center;margin: 0;}";
+	newCssRules += ".pagination>li>a 							{background: #0b0c0d;border-color: #5afbea;color: #5afbea;}";
+	newCssRules += ".pagination>li>a:hover 						{background: #2b2c2d;border-color: #5afbea;color: #5afbea;}"
+	newCssRules += ".pagination>.active>a, .pagination>.active>a:hover {background-color: #5afbea;border-color: #5afbea;color: #0b0c0d;}";
 	newCssRules += ".stopthat 									{color: red; font-weight: bold; font-size: 15px;}";
 	newCssRules += "</style>";
     $("head").append( newCssRules );
@@ -163,8 +168,22 @@ function init(){
 	function missionEditSetup(editScope) {
 		var editStep = editScope.mission.ui.view;
 		
+		//Replace breadcrumb with something a bit clearer
+		$(".view").empty();
+		var newBreadcrumb = "<ul class='pagination'>";
+		
+		newBreadcrumb += "<li" + (editScope.IsViewActive(editScope.EditorScreenViews.TYPE) ? " class='active'" : "") + "><a role='button' ng-click='bulletSetView(EditorScreenViews.TYPE)'>Mission Type</a></li>";
+		newBreadcrumb += "<li" + (editScope.IsViewActive(editScope.EditorScreenViews.NAME) ? " class='active'" : "") + "><a role='button' ng-click='bulletSetView(EditorScreenViews.NAME)'>Mission Details</a></li>";
+		newBreadcrumb += "<li" + (editScope.IsViewActive(editScope.EditorScreenViews.WAYPOINTS) ? " class='active'" : "") + "><a role='button' ng-click='bulletSetView(EditorScreenViews.WAYPOINTS)'>Waypoints</a></li>";
+		newBreadcrumb += "<li" + (editScope.IsViewActive(editScope.EditorScreenViews.PREVIEW) ? " class='active'" : "") + "><a role='button' ng-click='bulletSetView(EditorScreenViews.PREVIEW)'>Preview</a></li>";
+		
+		newBreadcrumb += "</ul>";
+		
+		var compiledBread = $compile(newBreadcrumb)(editScope);
+		$(".view").append(compiledBread);
+		
+		//more editorialising on non-linear missions in banners
 		if (editStep == editScope.EditorScreenViews.TYPE){
-			//more editorialising on non-linear missions in banners
 			var editorial = "<div ng-show='!mission.definition._sequential' class='col-xs-10 col-xs-offset-1'><span class='stopthat'>Please be advised that if you are creating a banner, making the missions Any Order creates a very unpleasant experience for the player, as it is much harder to plan the route and know which portals to hack. Please select Sequential for banner missions - your rating on IngressMosaik will thank you! </span></div>"
 			var compiledContent = $compile(editorial)(editScope);
 			$(".bordered-panel > .top-buffer:last-of-type").append(compiledContent);
@@ -180,7 +199,7 @@ function init(){
 	
 	function missionListSetup(missionScope){
 		$(".missions-list").empty()
-            $(".missions-list").addClass("row");;
+            $(".missions-list").addClass("row");
             missionScope.missions = w.$filter("orderBy")(missionScope.missions, 'definition.name');
 
     	    w.$injector.invoke(function($compile) {
@@ -232,7 +251,6 @@ function init(){
 						newMissionPanel += "<i class='glyphicon glyphicon-random' title='Non-linear waypoints (should not be used if the mission is part of a banner)'></i>";
 						break;
 					}
-				   mission.definition.mission_type 
 				   newMissionPanel += "</td>";
 				   if (mission.stats){
 					   newMissionPanel += "<td><i class='glyphicon glyphicon-time'></i> " + missionScope.getMissionTimeString(mission) + "</td>";
