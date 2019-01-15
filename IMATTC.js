@@ -11,11 +11,12 @@
 
 $(function () {
     'use strict';
-    // Your code here...
+    // Modify time conversion variables to ones with actual granularity 
     TimeConversionConstants.MINUTE_GRANULARITY_MINUTES = 1;
     TimeConversionConstants.HOUR_GRANULARITY_MINUTES = 15;
     TimeConversionConstants.DAY_GRANULARITY_HOURS = 12;
-
+	
+	//Build CSS rules
     var newCssRules = "<style>"
 	newCssRules += ".navbar-my-missions							{cursor: pointer;}";
 	newCssRules += ".missions-list .mission 					{border: 5px solid black; margin: 0; position: relative; height: 245px; padding: 5px; display: block;}";
@@ -79,6 +80,7 @@ $(function () {
 });
 
 function init(){
+	//
     var w = window;
     	let tryNumber = 15;
 
@@ -87,7 +89,7 @@ function init(){
             clearInterval(initWatcher);
 			alert("IMATTC initialisation failed, please refresh the page");
 		}
-		if (w.angular && $(".missions-list").length > 0) {
+		if (w.angular) {
 			let err = false;
 			try {
 				initAngular();
@@ -100,7 +102,7 @@ function init(){
 			if (!err) {
 				try {
                     clearInterval(initWatcher);
-					whenItsLoaded();
+					pageChange()
 				} catch (error) {
 					console.log(error);
 				}
@@ -140,10 +142,21 @@ function init(){
 	}
 	
     function whenItsLoaded(){
-			$(".missions-list").empty()
-            $(".missions-list").addClass("row");
-            var missionsElement = $('div.list');
-            var missionScope = w.$scope(missionsElement);
+            var missionScope = w.$scope($('div.list'));
+			
+			if (missionScope){
+				missionListSetup(missionScope);
+			} else {
+				var editScope = w.$scope($('div.editor'));
+				if (editScope){
+					 alert("yay");
+				}
+			}
+    }
+	
+	function missionListSetup(missionScope){
+		$(".missions-list").empty()
+            $(".missions-list").addClass("row");;
             missionScope.missions = w.$filter("orderBy")(missionScope.missions, 'definition.name');
 
     	    w.$injector.invoke(function($compile) {
@@ -212,11 +225,11 @@ function init(){
 				   var compiledContent = $compile(newMissionPanel)(missionScope);
 		
 				   // Put the output of the compilation in to the page using jQuery
-				   $('.missions-list').append(compiledContent);								   
+				   $('.missions-list').append(compiledContent);
 				}
 
-   });
-    }
+   		});
+	}
 }
 
 setTimeout(() => {
