@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         IMATTC
 // @namespace    http://tampermonkey.net/
-// @version      0.3.2
+// @version      0.3.3
 // @description  A usability overhaul for the Ingress Mission Authoring Tool
 // @author       You
 // @match        https://mission-author-dot-betaspike.appspot.com/
@@ -165,25 +165,28 @@ function init(){
 				   newMissionPanel += "></i>";				   
 				   newMissionPanel += "</div></div>";
 				   newMissionPanel += "<span class='name mission-time-" + missionState + "'>"+missionScope.getInfoTime(mission)+"</span>";
-				   newMissionPanel += "<table class='table table-bordered'><tr>";
-				   newMissionPanel += "<td>";
+				   newMissionPanel += "<table class='table table-bordered'";
+				   if (!mission.stats){
+					 newMissionPanel += " style='width: 20%;' ";  
+					}
+				   newMissionPanel += "><tr><td>";
 				   switch (mission.definition.mission_type) {
 					case "SEQUENTIAL":
-						newMissionPanel += "Sequential";
+						newMissionPanel += "<i class='glyphicon glyphicon-arrow-right' title='Sequential waypoints'></i>";
 						break;
 					case "HIDDEN_SEQUENTIAL":
-						newMissionPanel += "Sequential: Hidden";
+						newMissionPanel += "<i class='glyphicon glyphicon-eye-close' title='Hidden sequential waypoints'></i>";
 						break;
 					case "NON_SEQUENTIAL":
-						newMissionPanel += "Any Order";
+						newMissionPanel += "<i class='glyphicon glyphicon-random' title='Non-linear waypoints (should not be used if the mission is part of a banner)'></i>";
 						break;
 					}
 				   mission.definition.mission_type 
 				   newMissionPanel += "</td>";
 				   if (mission.stats){
-					   newMissionPanel += "<td>" + missionScope.getMissionTimeString(mission) + "</td>";
-					   newMissionPanel += "<td>" + missionScope.getMissionRatingString(mission) + "</td>";
-					   newMissionPanel += "<td>" + mission.stats.num_completed + "</td>";					   
+					   newMissionPanel += "<td><i class='glyphicon glyphicon-time'></i> " + missionScope.getMissionTimeString(mission) + "</td>";
+					   newMissionPanel += "<td><i class='glyphicon glyphicon-thumbs-up'></i> " + missionScope.getMissionRatingString(mission) + "</td>";
+					   newMissionPanel += "<td><i class='glyphicon glyphicon-user'></i> " + mission.stats.num_completed + "</td>";					   
 					}
 				   newMissionPanel += "</tr></table>";
 				   newMissionPanel += "<div class='dropup'><button class='button action-button dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>Perform Mission Action <span class='caret'></span></button>";
