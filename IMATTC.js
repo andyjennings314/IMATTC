@@ -11,6 +11,9 @@
 
 $(function () {
     'use strict';
+	//Latest version of Bootstrap
+	$("link[href='vendor/bootstrap/css/bootstrap.css']").attr("href","https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css")
+	
     // Modify time conversion variables to ones with actual granularity 
     TimeConversionConstants.MINUTE_GRANULARITY_MINUTES = 1;
     TimeConversionConstants.HOUR_GRANULARITY_MINUTES = 15;
@@ -74,6 +77,7 @@ $(function () {
 	newCssRules += ".dropup 									{position: relative;}";
 	newCssRules += ".dropup .dropdown-menu						{top: initial; bottom: 30px; left: 0; right: 0; text-align: center;}";
 	newCssRules += ".dropdown-menu > li > a 					{cursor: pointer;}";
+	newCssRules += ".stopthat 									{color: red; font-weight: bold; font-size: 15px;}";
 	newCssRules += "</style>";
     $("head").append( newCssRules );
 
@@ -119,6 +123,7 @@ function init(){
         w.$filter = w.$app.injector().get('$filter');
         w.$compile = w.$app.injector().get('$compile');
 		w.$location = w.$app.injector().get('$location');
+		w.$timeout = w.$app.injector().get('$timeout');
 		
 		w.$rootScope.$on('$routeChangeStart', function (next, last) {
 			setTimeout(() => {
@@ -136,7 +141,7 @@ function init(){
 			whenItsLoaded()
 		} else {
 			setTimeout(() => {
-				pageChange()
+				pageChange();
 			}, 1000);
 		}
 	}
@@ -149,10 +154,27 @@ function init(){
 			} else {
 				var editScope = w.$scope($('div.editor'));
 				if (editScope){
-					 alert("yay");
+					missionEditSetup(editScope);
 				}
 			}
     }
+	
+	function missionEditSetup(editScope) {
+		var editStep = editScope.mission.ui.view;
+		
+		if (editStep == editScope.EditorScreenViews.TYPE){
+			//more editorialising on non-linear missions in banners
+			var editorial = "<div class='col-xs-10 col-xs-offset-1'><span class='stopthat'>Please be advised that if you are creating a banner, making the missions Any Order creates a very unpleasent experience for the player, as it is much harder to plan the route and know which portals to hack. Please select Sequential for banner missions - your rating on IngressMosaik will thank you! </span></div>"
+			$(".bordered-panel > .top-buffer:last-of-type").append(editorial);
+		}
+		
+		editScope.setView = function(b) {
+			editScope.pendingSave && (w.$timeout.cancel(editScope.pendingSave), editScope.pendingSave = null);
+			editScope.save(b);
+			setTimeout(() => { pageChange(); }, 500);
+		}
+		
+	}
 	
 	function missionListSetup(missionScope){
 		$(".missions-list").empty()
