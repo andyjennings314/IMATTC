@@ -119,12 +119,26 @@ function init(){
 		w.$location = w.$app.injector().get('$location');
 		
 		w.$rootScope.$on('$routeChangeStart', function (next, last) {
-		   init();
+			setTimeout(() => {
+				pageChange()
+			}, 500);
 		});
 
 		w.$scope = element => w.angular.element(element).scope();
 	}
 
+	function pageChange(){
+		var loadingElement = $('div.loading-screen');
+        var loadingScope = w.$scope(loadingElement);
+		if (!loadingScope.hasPendingRequests()){
+			whenItsLoaded()
+		} else {
+			setTimeout(() => {
+				pageChange()
+			}, 1000);
+		}
+	}
+	
     function whenItsLoaded(){
 			$(".missions-list").empty()
             $(".missions-list").addClass("row");
