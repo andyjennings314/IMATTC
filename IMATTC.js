@@ -189,7 +189,7 @@ function init(){
 				   var missionState = mission.missionListState.toLowerCase();
 				   var newMissionPanel = "<div class='mission col-sm-6 col-md-3 mission-list-item-" + missionState + "'>";
 				   newMissionPanel += "<div class='mission-header-container'><div>";
-				   newMissionPanel += "<img class='mission-image' src='" + mission.definition.logo_url + "'>";
+				   newMissionPanel += "<img class='mission-image' src='" + (mission.definition.logo_url ? mission.definition.logo_url + "=s60-c" : "/images/button_logo.png") + "'>";
 				   newMissionPanel += "</div><div>";
 				   newMissionPanel += "<span class='name mission-title-" + missionState + "'>" + mission.definition.name + "</span>";				   
 				   newMissionPanel += "</div><div>";
