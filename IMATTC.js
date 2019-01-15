@@ -143,7 +143,7 @@ function init(){
 		} else {
 			setTimeout(() => {
 				pageChange();
-			}, 1000);
+			}, 250);
 		}
 	}
 	
@@ -165,8 +165,9 @@ function init(){
 		
 		if (editStep == editScope.EditorScreenViews.TYPE){
 			//more editorialising on non-linear missions in banners
-			var editorial = "<div class='col-xs-10 col-xs-offset-1'><span class='stopthat'>Please be advised that if you are creating a banner, making the missions Any Order creates a very unpleasant experience for the player, as it is much harder to plan the route and know which portals to hack. Please select Sequential for banner missions - your rating on IngressMosaik will thank you! </span></div>"
-			$(".bordered-panel > .top-buffer:last-of-type").append(editorial);
+			var editorial = "<div ng-show='!mission.definition._sequential' class='col-xs-10 col-xs-offset-1'><span class='stopthat'>Please be advised that if you are creating a banner, making the missions Any Order creates a very unpleasant experience for the player, as it is much harder to plan the route and know which portals to hack. Please select Sequential for banner missions - your rating on IngressMosaik will thank you! </span></div>"
+			var compiledContent = $compile(editorial)(editScope);
+			$(".bordered-panel > .top-buffer:last-of-type").append(compiledContent);
 		}
 		
 		editScope.setView = function(b) {
