@@ -6,8 +6,8 @@
 // @match        https://mission-author-dot-betaspike.appspot.com/
 // @match        https://mission-author-dot-betaspike.appspot.com/edit*
 // @grant        none
-// @downloadURL	 https://github.com/andyjennings314/IMATTC/raw/master/IMATTC.js
-// @updateURL	 https://github.com/andyjennings314/IMATTC/raw/master/IMATTC.js
+// @downloadURL	 https://github.com/andyjennings314/IMATTC/raw/master/IMATTC.user.js
+// @updateURL	 https://github.com/andyjennings314/IMATTC/raw/master/IMATTC.user.js
 // ==/UserScript==
 
 $(function () {
