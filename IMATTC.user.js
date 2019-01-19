@@ -14,7 +14,7 @@ $(function() {
     //Latest version of Bootstrap
     $("link[href='vendor/bootstrap/css/bootstrap.css']").attr("href", "https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css")
 
-    // Modify time conversion variables to ones with actual granularity 
+    // Modify time conversion variables to ones with actual granularity
     TimeConversionConstants.MINUTE_GRANULARITY_MINUTES = 1;
     TimeConversionConstants.HOUR_GRANULARITY_MINUTES = 15;
     TimeConversionConstants.DAY_GRANULARITY_HOURS = 12;
@@ -82,7 +82,10 @@ $(function() {
     newCssRules += ".pagination>li>a 							{background: #0b0c0d;border-color: #5afbea;color: #5afbea;}";
     newCssRules += ".pagination>li>a:hover 						{background: #2b2c2d;border-color: #5afbea;color: #5afbea;}"
     newCssRules += ".pagination>.active>a, .pagination>.active>a:hover {background-color: #5afbea;border-color: #5afbea;color: #0b0c0d;}";
-    newCssRules += ".stopthat 									{color: red; font-weight: bold; font-size: 15px;}";
+    newCssRules += ".type-view .btn.focus, .type-view .btn:focus, .type-view .btn:hover {color: unset;}";
+    newCssRules += ".type-view .btn.active.focus, .type-view .btn.active:focus, .type-view .btn.active:hover {color: #ebbc4a;}";
+    newCssRules += ".bordered-panel p           {font-size: 20px;}";
+    newCssRules += ".stopthat 									{color: red; font-weight: bold;}";
     newCssRules += "</style>";
     $("head").append(newCssRules);
 
@@ -182,11 +185,23 @@ function init() {
 
         //more editorialising on non-linear missions in banners
         if (editStep == editScope.EditorScreenViews.TYPE) {
-            var editorial = "<div ng-show='!mission.definition._sequential' class='col-xs-10 col-xs-offset-1'><span class='stopthat'>Please be advised that if you are creating a banner, making the missions Any Order creates a very unpleasant experience for the player, as it is much harder to plan the route and know which portals to hack. Please select Sequential for banner missions - your rating on IngressMosaik will thank you! </span></div>"
-            var compiledContent = $compile(editorial)(editScope);
-            $(".bordered-panel > .top-buffer:last-of-type").append(compiledContent);
+            $(".type-view .bordered-panel").empty();
+            var editCode = "<div class='btn-group btn-group-justified'>";
+
+            editCode += "<div class='btn-group'><button class='btn' ng-click='mission.definition._sequential = true; mission.definition._hidden = false' ng-class='{active: mission.definition._sequential && !mission.definition._hidden}'><i class='glyphicon glyphicon-arrow-right'></i>&nbsp;&nbsp;SEQUENTIAL</button></div>";
+            editCode += "<div class='btn-group'><button class='btn' ng-click='mission.definition._sequential = true; mission.definition._hidden = true' ng-class='{active: mission.definition._sequential && mission.definition._hidden}'><i class='glyphicon glyphicon-eye-close'></i>&nbsp;&nbsp;HIDDEN SEQUENTIAL</button></div>";
+            editCode += "<div class='btn-group'><button class='btn' ng-click='mission.definition._sequential = false; mission.definition._hidden = false' ng-class='{active: !mission.definition._sequential}'><i class='glyphicon glyphicon-random'></i>&nbsp;&nbsp;ANY ORDER</button></div>";
+
+            editCode += "</div><br />";
+
+            editCode += "<p ng-show='mission.definition._sequential && !mission.definition._hidden'>Agents visit portals and field trip markers in a set order.<br/><br/>Best suited to missions in a banner series, or one-offs with a pre-determined route.</p>"
+            editCode += "<p ng-show='mission.definition._sequential && mission.definition._hidden'>Agents visit portals and field trip markers in a set order, but the location of every waypoint beyond the first is hidden, meaning players rely on clues in the waypoint text.<br/><br/>Good for more puzzle-based missions, but please ensure you provide adequate clues for agents to find all the waypoints.</p>"
+            editCode += "<p ng-show='!mission.definition._sequential'>Agents visit portals and field trip markers in any order. Excellent for one-off missions where a specific route isn't required, but terrible for missions in banner serieses.<br /><br /><span class='stopthat'>It is strongly advised that if you are making missions for a banner, you set them as Sequential missions - your rating on IngressMosaik will thank you! </span></p>"
+            var compiledContent = $compile(editCode)(editScope);
+            $(".type-view .bordered-panel").append(compiledContent);
         }
 
+        //Runs pageChange() function when changing between Edit states
         editScope.setView = function(b) {
             editScope.pendingSave && (w.$timeout.cancel(editScope.pendingSave), editScope.pendingSave = null);
             editScope.save(b);
