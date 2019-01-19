@@ -260,8 +260,10 @@ function init(){
 				   newMissionPanel += "</tr></table>";
 				   newMissionPanel += "<div class='dropup'><button class='button action-button dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>Perform Mission Action <span class='caret'></span></button>";
 				   newMissionPanel += "<ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>"
-				   newMissionPanel += "<li><a role='button' ng-click='button1Clicked(missions["+i+"])'>" + missionScope.getButton1Title(mission) + "</a></li>";
-				   newMissionPanel += "<li><a role='button' ng-click='button2Clicked(missions["+i+"])'>" + missionScope.getButton2Title(mission) + "</a></li>";
+				   if (missionScope.getButton1Title(mission))
+				   		newMissionPanel += "<li><a role='button' ng-click='button1Clicked(missions["+i+"])'>" + missionScope.getButton1Title(mission) + "</a></li>";
+				   if (missionScope.getButton2Title(mission))
+				   		newMissionPanel += "<li><a role='button' ng-click='button2Clicked(missions["+i+"])'>" + missionScope.getButton2Title(mission) + "</a></li>";
 				   newMissionPanel += "</ul></div>"
 				   newMissionPanel += "</div>";
 				   var compiledContent = $compile(newMissionPanel)(missionScope);
