@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         IMATTC
-// @version      0.3.4
+// @version      0.3.5
 // @description  A usability overhaul for the Ingress Mission Authoring Tool
 // @author       @Chyld314
 // @match        https://mission-author-dot-betaspike.appspot.com/
@@ -79,7 +79,7 @@ $(function() {
     newCssRules += ".dropup .dropdown-menu						{top: initial; bottom: 30px; left: 0; right: 0; text-align: center;}";
     newCssRules += ".dropdown-menu > li > a 					{cursor: pointer;}";
     newCssRules += ".editor .view 								{width: initial;height: initial;text-align: center;margin: 0;}";
-    newCssRules += ".editor .type-view, .editor .name-view  {width: 100%;}"; 
+    newCssRules += ".editor .type-view, .editor .name-view  {width: 100%;}";
     newCssRules += ".pagination>li>a 							{background: #0b0c0d;border-color: #5afbea;color: #5afbea;}";
     newCssRules += ".pagination>li>a:hover 						{background: #2b2c2d;border-color: #5afbea;color: #5afbea;}"
     newCssRules += ".pagination>.active>a, .pagination>.active>a:hover {background-color: #5afbea;border-color: #5afbea;color: #0b0c0d;}";
@@ -87,6 +87,10 @@ $(function() {
     newCssRules += ".type-view .btn.active.focus, .type-view .btn.active:focus, .type-view .btn.active:hover {color: #ebbc4a;}";
     newCssRules += ".bordered-panel p           {font-size: 20px;}";
     newCssRules += ".stopthat 									{color: red; font-weight: bold;}";
+    newCssRules += "input.form-control, textarea.form-control {border: 1px solid #5afbea; background: none; border-radius: 0; color: white;}";
+    newCssRules += ".upload-logo .input-row .upload-label {display: block;padding: 0 0 10px;}";
+    newCssRules += ".upload-logo .input-row {display: block;}";
+    newCssRules += ".upload-logo .input-row .upload-logo-cell, .upload-logo .input-row .clear-logo-button {display: inline-block;padding: 0; max-width: 50%;}";
     newCssRules += "</style>";
     $("head").append(newCssRules);
 
@@ -184,8 +188,8 @@ function init() {
         var compiledBread = $compile(newBreadcrumb)(editScope);
         $(".view").append(compiledBread);
 
-        //Overhauled UI on Mission Type page, including more editorialising on non-linear missions in banners
         if (editStep == editScope.EditorScreenViews.TYPE) {
+            //Overhauled UI on Mission Type page, including more editorialising on non-linear missions in banners
             $(".type-view .bordered-panel").empty();
             var editCode = "<div class='btn-group btn-group-justified'>";
 
@@ -200,6 +204,20 @@ function init() {
             editCode += "<p ng-show='!mission.definition._sequential'>Agents visit portals and field trip markers in any order. Excellent for one-off missions where a specific route isn't required, but terrible for missions in banner serieses.<br /><br /><span class='stopthat'>It is strongly advised that if you are making missions for a banner, you set them as Sequential missions - your rating on IngressMosaik will thank you! </span></p>"
             var compiledContent = $compile(editCode)(editScope);
             $(".type-view .bordered-panel").append(compiledContent);
+        } else if (editStep == editScope.EditorScreenViews.NAME){
+          //Overhauled UI on Mission Name/Image pages
+          $(".name-view .bordered-panel").empty();
+          var editCode = "<div class='row'><div class='col-sm-8 form-horizontal'><div class='form-group'>";
+          editCode += "<label for='missionName' class='col-sm-2 control-label'>Mission Name</label>";
+          editCode += "<div class='col-sm-10'><input type='text' id='missionName' ng-model='mission.definition.name' class='form-control' placeholder='Add mission name' ng-class='{\"invalid\": !mission.definition.name}' maxlength='" + editScope.MissionRules.MAX_MISSION_NAME_LENGTH + "'>";
+          editCode += "</div></div><div class='form-group'>";
+          editCode += "<label for='missionDesc' class='col-sm-2 control-label'>Mission Description</label>";
+          editCode += "<div class='col-sm-10'><textarea id='missionDesc' class='form-control' rows='4' ng-model='mission.definition.description' placeholder='Add mission description' ng-class='{\"invalid\": !mission.definition.description}' maxlength='" + editScope.MissionRules.MAX_MISSION_DESCRIPTION_LENGTH + "'></textarea>";
+          editCode += "</div></div></div><div class='col-sm-4'";
+          editCode += "<div mission-logo-upload max-size='{{LogoParams.MAX_SIZE_BYTES}}' success='logoUploadSuccess' error='logoUploadFailure' pre-post='ensureMissionHasGuid' accept='image/*' type-restriction='image/(gif|jpeg|jpg|png)' mission='mission'></div>";
+          editCode += "</div></div>";
+          var compiledContent = $compile(editCode)(editScope);
+          $(".name-view .bordered-panel").append(compiledContent);
         }
 
         //Runs pageChange() function when changing between Edit states
