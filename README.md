@@ -14,5 +14,10 @@ A Greasemonkey-powered total overhaul for the Ingress Mission Authoring Tool
 - Extra options for filtering/searching missions
 
 ## Release History
-- 0.3.4: Preparation for beta testing. Page changes now check variable for page load to confirm page transition. Adding better breadcrumb to Edit Mission pages. Added warning about Any Order missions when selected as Mission Type. Better handing for mission images. CSS fixes. 
-- pre-0.3.4: To be written - for now, check commits on Github.
+- 0.3.5: Mission actions check appropriate actions exist. Overhaul on Mission Type and Mission Name pages for better layout.
+- 0.3.4: Preparation for beta testing. Page changes now check variable for page load to confirm page transition. Adding better breadcrumb to Edit Mission pages. Added warning about Any Order missions when selected as Mission Type. Better handing for mission images. CSS fixes.
+- 0.3.3: All mission action buttons now match mission status colour schemes. Mission type on overview page now uses glyphicons. 
+- 0.3.1 - 0.3.2: Mission details table border colours and some mission action button colours now match mission status colour schemes.
+- 0.2.2: Init() now runs on $routeChangeStart attached to rootScope, removed custom header element.
+- 0.2.1: Header element now runs init() to reload mission overview. Better script load fail message.
+- pre-0.2.1: Check commits on GitHub for more information.
