@@ -79,6 +79,7 @@ $(function() {
     newCssRules += ".dropup .dropdown-menu						{top: initial; bottom: 30px; left: 0; right: 0; text-align: center;}";
     newCssRules += ".dropdown-menu > li > a 					{cursor: pointer;}";
     newCssRules += ".editor .view 								{width: initial;height: initial;text-align: center;margin: 0;}";
+    newCssRules += ".editor .type-view, .editor .name-view  {width: 100%;}"; 
     newCssRules += ".pagination>li>a 							{background: #0b0c0d;border-color: #5afbea;color: #5afbea;}";
     newCssRules += ".pagination>li>a:hover 						{background: #2b2c2d;border-color: #5afbea;color: #5afbea;}"
     newCssRules += ".pagination>.active>a, .pagination>.active>a:hover {background-color: #5afbea;border-color: #5afbea;color: #0b0c0d;}";
@@ -183,14 +184,14 @@ function init() {
         var compiledBread = $compile(newBreadcrumb)(editScope);
         $(".view").append(compiledBread);
 
-        //more editorialising on non-linear missions in banners
+        //Overhauled UI on Mission Type page, including more editorialising on non-linear missions in banners
         if (editStep == editScope.EditorScreenViews.TYPE) {
             $(".type-view .bordered-panel").empty();
             var editCode = "<div class='btn-group btn-group-justified'>";
 
-            editCode += "<div class='btn-group'><button class='btn' ng-click='mission.definition._sequential = true; mission.definition._hidden = false' ng-class='{active: mission.definition._sequential && !mission.definition._hidden}'><i class='glyphicon glyphicon-arrow-right'></i>&nbsp;&nbsp;SEQUENTIAL</button></div>";
-            editCode += "<div class='btn-group'><button class='btn' ng-click='mission.definition._sequential = true; mission.definition._hidden = true' ng-class='{active: mission.definition._sequential && mission.definition._hidden}'><i class='glyphicon glyphicon-eye-close'></i>&nbsp;&nbsp;HIDDEN SEQUENTIAL</button></div>";
-            editCode += "<div class='btn-group'><button class='btn' ng-click='mission.definition._sequential = false; mission.definition._hidden = false' ng-class='{active: !mission.definition._sequential}'><i class='glyphicon glyphicon-random'></i>&nbsp;&nbsp;ANY ORDER</button></div>";
+            editCode += "<div class='btn-group'><button class='btn btn-lg' ng-click='mission.definition._sequential = true; mission.definition._hidden = false' ng-class='{active: mission.definition._sequential && !mission.definition._hidden}'><i class='glyphicon glyphicon-arrow-right'></i>&nbsp;&nbsp;SEQUENTIAL</button></div>";
+            editCode += "<div class='btn-group'><button class='btn btn-lg' ng-click='mission.definition._sequential = true; mission.definition._hidden = true' ng-class='{active: mission.definition._sequential && mission.definition._hidden}'><i class='glyphicon glyphicon-eye-close'></i>&nbsp;&nbsp;HIDDEN SEQUENTIAL</button></div>";
+            editCode += "<div class='btn-group'><button class='btn btn-lg' ng-click='mission.definition._sequential = false; mission.definition._hidden = false' ng-class='{active: !mission.definition._sequential}'><i class='glyphicon glyphicon-random'></i>&nbsp;&nbsp;ANY ORDER</button></div>";
 
             editCode += "</div><br />";
 
