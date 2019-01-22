@@ -80,7 +80,7 @@ $(function() {
     newCssRules += ".dropdown-menu > li > a 					{cursor: pointer;}";
     newCssRules += ".editor .view 								{width: initial;height: initial;text-align: center;margin: 0;}";
     newCssRules += ".editor .type-view, .editor .name-view  {width: 100%;}";
-    newCssRules += ".pagination>li>a 							{background: #0b0c0d;border-color: #5afbea;color: #5afbea;}";
+    newCssRules += ".pagination>li>a 							{background: #0b0c0d;border-color: #5afbea;color: #5afbea; font-size: 18px;}";
     newCssRules += ".pagination>li>a:hover 						{background: #2b2c2d;border-color: #5afbea;color: #5afbea;}"
     newCssRules += ".pagination>.active>a, .pagination>.active>a:hover {background-color: #5afbea;border-color: #5afbea;color: #0b0c0d;}";
     newCssRules += ".type-view .btn.focus, .type-view .btn:focus, .type-view .btn:hover {color: unset;}";
