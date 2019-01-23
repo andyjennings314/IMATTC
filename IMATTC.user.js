@@ -262,7 +262,7 @@ function init() {
                     case "submitted":
                         newMissionPanel += "send' title='Unpublished mission under review'";
                         break;
-                    case "submiteed_and_published":
+                    case "submitted_and_published":
                         newMissionPanel += "send' title='Published mission, changes under review'";
                         break;
                 }
