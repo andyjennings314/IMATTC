@@ -232,79 +232,93 @@ function init() {
     }
 
     function missionListSetup(missionScope) {
-        $(".missions-list").empty()
-        $(".missions-list").addClass("row");
+        var generateMission = function(mission, id){
+          var missionState = mission.missionListState.toLowerCase();
+          var newMissionCode = "<div class='mission col-sm-6 col-md-3 mission-list-item-" + missionState + "'>";
+          newMissionCode += "<div class='mission-header-container'><div>";
+          newMissionCode += "<img class='mission-image' src='" + (mission.definition.logo_url ? mission.definition.logo_url + "=s60-c" : "/images/button_logo.png") + "'>";
+          newMissionCode += "</div><div>";
+          newMissionCode += "<span class='name mission-title-" + missionState + "'>" + mission.definition.name + "</span>";
+          newMissionCode += "</div><div>";
+          newMissionCode += "<i class='name mission-title-" + missionState + " glyphicon glyphicon-";
+          switch (missionState) {
+              case "draft":
+                  newMissionCode += "wrench' title='Unpublished draft mission'";
+                  break;
+              case "draft_of_published_mission":
+                  newMissionCode += "wrench' title='Published mission with unpublished edits'";
+                  break;
+              case "published":
+                  newMissionCode += "ok' title='Published mission'";
+                  break;
+              case "submitted":
+                  newMissionCode += "send' title='Unpublished mission under review'";
+                  break;
+              case "submitted_and_published":
+                  newMissionCode += "send' title='Published mission, changes under review'";
+                  break;
+          }
+          newMissionCode += "></i>";
+          newMissionCode += "</div></div>";
+          newMissionCode += "<span class='name mission-time-" + missionState + "'>" + missionScope.getInfoTime(mission) + "</span>";
+          newMissionCode += "<table class='table table-bordered'";
+          if (!mission.stats) {
+              newMissionCode += " style='width: 20%;' ";
+          }
+          newMissionCode += "><tr><td>";
+          switch (mission.definition.mission_type) {
+              case "SEQUENTIAL":
+                  newMissionCode += "<i class='glyphicon glyphicon-arrow-right' title='Sequential waypoints'></i>";
+                  break;
+              case "HIDDEN_SEQUENTIAL":
+                  newMissionCode += "<i class='glyphicon glyphicon-eye-close' title='Hidden sequential waypoints'></i>";
+                  break;
+              case "NON_SEQUENTIAL":
+                  newMissionCode += "<i class='glyphicon glyphicon-random' title='Non-linear waypoints (should not be used if the mission is part of a banner)'></i>";
+                  break;
+          }
+          newMissionCode += "</td>";
+          if (mission.stats) {
+              newMissionCode += "<td><i class='glyphicon glyphicon-time'></i> " + missionScope.getMissionTimeString(mission) + "</td>";
+              newMissionCode += "<td><i class='glyphicon glyphicon-thumbs-up'></i> " + missionScope.getMissionRatingString(mission) + "</td>";
+              newMissionCode += "<td><i class='glyphicon glyphicon-user'></i> " + mission.stats.num_completed + "</td>";
+          }
+          newMissionCode += "</tr></table>";
+          newMissionCode += "<div class='dropup'><button class='button action-button dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>Perform Mission Action <span class='caret'></span></button>";
+          newMissionCode += "<ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>"
+          if (missionScope.getButton1Title(mission))
+              newMissionCode += "<li><a role='button' ng-click='button1Clicked(missions[" + id + "])'>" + missionScope.getButton1Title(mission) + "</a></li>";
+          if (missionScope.getButton2Title(mission))
+              newMissionCode += "<li><a role='button' ng-click='button2Clicked(missions[" + id + "])'>" + missionScope.getButton2Title(mission) + "</a></li>";
+          newMissionCode += "</ul></div>"
+          newMissionCode += "</div>";
+          return newMissionCode;
+        }
+
         missionScope.missions = w.$filter("orderBy")(missionScope.missions, 'definition.name');
+        $(".missions-list").empty();
+        var categoriesList = w.localStorage.getItem('categoriesList') || [];
+        if (categoriesList.length == 0){
+          $(".missions-list").addClass("row");
+        }
+
+        //w.localStorage.setItem('arrayTest', testArray);
 
         w.$injector.invoke(function($compile) {
+          var missionContent = "";
+          if (categoriesList.length < 0){
+            //if there are user-defined categories, loop over them
+          } else {
+            //if no user-defined categories, just loop through the missions
             for (var i = 0; i < missionScope.missions.length; i++) {
-                // Pass our fragment content to $compile,
-                // and call the function that $compile returns with the scope.
                 var mission = missionScope.missions[i];
-                var missionState = mission.missionListState.toLowerCase();
-                var newMissionPanel = "<div class='mission col-sm-6 col-md-3 mission-list-item-" + missionState + "'>";
-                newMissionPanel += "<div class='mission-header-container'><div>";
-                newMissionPanel += "<img class='mission-image' src='" + (mission.definition.logo_url ? mission.definition.logo_url + "=s60-c" : "/images/button_logo.png") + "'>";
-                newMissionPanel += "</div><div>";
-                newMissionPanel += "<span class='name mission-title-" + missionState + "'>" + mission.definition.name + "</span>";
-                newMissionPanel += "</div><div>";
-                newMissionPanel += "<i class='name mission-title-" + missionState + " glyphicon glyphicon-";
-                switch (missionState) {
-                    case "draft":
-                        newMissionPanel += "wrench' title='Unpublished draft mission'";
-                        break;
-                    case "draft_of_published_mission":
-                        newMissionPanel += "wrench' title='Published mission with unpublished edits'";
-                        break;
-                    case "published":
-                        newMissionPanel += "ok' title='Published mission'";
-                        break;
-                    case "submitted":
-                        newMissionPanel += "send' title='Unpublished mission under review'";
-                        break;
-                    case "submitted_and_published":
-                        newMissionPanel += "send' title='Published mission, changes under review'";
-                        break;
-                }
-                newMissionPanel += "></i>";
-                newMissionPanel += "</div></div>";
-                newMissionPanel += "<span class='name mission-time-" + missionState + "'>" + missionScope.getInfoTime(mission) + "</span>";
-                newMissionPanel += "<table class='table table-bordered'";
-                if (!mission.stats) {
-                    newMissionPanel += " style='width: 20%;' ";
-                }
-                newMissionPanel += "><tr><td>";
-                switch (mission.definition.mission_type) {
-                    case "SEQUENTIAL":
-                        newMissionPanel += "<i class='glyphicon glyphicon-arrow-right' title='Sequential waypoints'></i>";
-                        break;
-                    case "HIDDEN_SEQUENTIAL":
-                        newMissionPanel += "<i class='glyphicon glyphicon-eye-close' title='Hidden sequential waypoints'></i>";
-                        break;
-                    case "NON_SEQUENTIAL":
-                        newMissionPanel += "<i class='glyphicon glyphicon-random' title='Non-linear waypoints (should not be used if the mission is part of a banner)'></i>";
-                        break;
-                }
-                newMissionPanel += "</td>";
-                if (mission.stats) {
-                    newMissionPanel += "<td><i class='glyphicon glyphicon-time'></i> " + missionScope.getMissionTimeString(mission) + "</td>";
-                    newMissionPanel += "<td><i class='glyphicon glyphicon-thumbs-up'></i> " + missionScope.getMissionRatingString(mission) + "</td>";
-                    newMissionPanel += "<td><i class='glyphicon glyphicon-user'></i> " + mission.stats.num_completed + "</td>";
-                }
-                newMissionPanel += "</tr></table>";
-                newMissionPanel += "<div class='dropup'><button class='button action-button dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>Perform Mission Action <span class='caret'></span></button>";
-                newMissionPanel += "<ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>"
-                if (missionScope.getButton1Title(mission))
-                    newMissionPanel += "<li><a role='button' ng-click='button1Clicked(missions[" + i + "])'>" + missionScope.getButton1Title(mission) + "</a></li>";
-                if (missionScope.getButton2Title(mission))
-                    newMissionPanel += "<li><a role='button' ng-click='button2Clicked(missions[" + i + "])'>" + missionScope.getButton2Title(mission) + "</a></li>";
-                newMissionPanel += "</ul></div>"
-                newMissionPanel += "</div>";
-                var compiledContent = $compile(newMissionPanel)(missionScope);
-
-                // Put the output of the compilation in to the page using jQuery
-                $('.missions-list').append(compiledContent);
+                missionContent += generateMission(mission, i);
             }
+          }
+            // Pass our fragment content to $compile, and call the function that $compile returns with the scope.
+            var compiledContent = $compile(missionContent)(missionScope);
+            // Put the output of the compilation in to the page using jQuery
+            $('.missions-list').append(compiledContent);
 
         });
     }
