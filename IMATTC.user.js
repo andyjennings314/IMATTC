@@ -237,8 +237,8 @@ function init() {
         var categoriesLength = parseInt(w.localStorage.getItem('categoriesLength')) || 0;
         var categoryIDs = w.localStorage.getItem('categoryIDs') ? w.localStorage.getItem('categoryIDs').split(',') : [];
         var categoryNames = w.localStorage.getItem('categoryNames') ? w.localStorage.getItem('categoryNames').split(',') : [];
-        var categoryContent = [true];
-        missionScope.categoryCollapse = [];
+        var categoryContent = [];
+        missionScope.categoryCollapse = [true];
         for (var i= 0; i < categoriesLength; i++){
           categoryContent.push(w.localStorage.getItem('categoryContent' + i) ? w.localStorage.getItem('categoryContent' + i).split(',') : []);
           missionScope.categoryCollapse.push(false)
@@ -355,9 +355,9 @@ function init() {
             //if there are user-defined categories, loop over them
             for (var i = 0; i < categoriesLength; i++){
               missionContent += "<div class='panel panel-default'><div class='panel-heading' role='tab' id='header-" + categoryIDs[i] + "'>";
-              missionContent += "<h4 class='panel-title'><a ng-click='categoryCollapse["+i+1+"] = !categoryCollapse["+i+1+"]' ng-class='{\"collapsed\" : !categoryCollapse["+i+1+"]}' role='button' data-toggle='collapse' data-parent=#accordion'>";
+              missionContent += "<h4 class='panel-title'><a ng-click='categoryCollapse["+(i+1)+"] = !categoryCollapse["+(i+1)+"]' ng-class='{\"collapsed\" : !categoryCollapse["+(i+1)+"]}' role='button' data-toggle='collapse'>";
               missionContent += categoryNames[i];
-              missionContent += "</a></h4></div><div class='panel-collapse collapse' ng-class='{\"in\" : categoryCollapse["+i+1+"]}' role='tabpanel'><div class='panel-body'>";
+              missionContent += "</a></h4></div><div class='panel-collapse collapse' ng-class='{\"in\" : categoryCollapse["+(i+1)+"]}' role='tabpanel'><div class='panel-body'>";
               missionContent += "<div class='row'>";
               if (!categoryContent[i] || categoryContent[i].length == 0){
                 //no missions so far!
@@ -374,7 +374,7 @@ function init() {
             //add unsorted missions if there are any
             var missionPrefixContent = "<div class='panel-group' id='accordion' role='tablist' aria-multiselectable='true' style='width: 100%'>";
             missionPrefixContent += "<div class='panel panel-default'><div class='panel-heading' role='tab' id='header-unsorted'>";
-            missionPrefixContent += "<h4 class='panel-title'><a ng-click='categoryCollapse[0] = !categoryCollapse[0]' ng-class='{\"collapsed\" : !categoryCollapse[0]}' role='button' data-toggle='collapse' data-parent=#accordion'>Unsorted Missions</a></h4></div><div class='panel-collapse collapse' ng-class='{\"in\" : categoryCollapse[0]}' role='tabpanel'><div class='panel-body'>";
+            missionPrefixContent += "<h4 class='panel-title'><a ng-click='categoryCollapse[0] = !categoryCollapse[0]' ng-class='{\"collapsed\" : !categoryCollapse[0]}' role='button' data-toggle='collapse'>Unsorted Missions</a></h4></div><div class='panel-collapse collapse' ng-class='{\"in\" : categoryCollapse[0]}' role='tabpanel'><div class='panel-body'>";
             missionPrefixContent += "<div class='row'>";
             for (var i = 0; i < missionScope.missions.length; i++) {
                 var mission = missionScope.missions[i];
