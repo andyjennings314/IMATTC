@@ -33,6 +33,10 @@ $(function() {
     newCssRules += ".button, button 							{background-image: none;}";
     newCssRules += ".mission .name.glyphicon 					{font-size: 40px;}";
     newCssRules += ".mission .name:not(.glyphicon) 				{text-align: center; display: block;}";
+    newCssRules += ".missions-list .panel-default { border-color: #5afbea; background-color: black; border-radius: 0;}";
+    newCssRules += ".missions-list .panel-default>.panel-heading {color: black; background: #5afbea; border-radius: 0;}";
+    newCssRules += ".missions-list .panel-default>.panel-heading a:hover {color: black;}";
+    newCssRules += ".missions-list .panel-default>.panel-heading+.panel-collapse>.panel-body {border-top-color: black; padding-top: 0;}";
 
     newCssRules += ".mission-list-item-published 				{background-image: none; background: darkgreen;color: lightgreen;}";
     newCssRules += ".list .mission .mission-title-published 	{color: lightgreen;}";
@@ -244,7 +248,7 @@ function init() {
           missionScope.categoryCollapse.push(false)
         }
 
-        var generateMission = function(mission, id){
+        var generateMission = function(mission, id, categorised){
           var missionState = mission.missionListState.toLowerCase();
           var newMissionCode = "<div class='mission col-sm-6 col-md-3 mission-list-item-" + missionState + "'>";
           newMissionCode += "<div class='mission-header-container'><div>";
@@ -306,6 +310,58 @@ function init() {
           newMissionCode += "</div>";
           return newMissionCode;
         }
+        var generateAllMissions = function(){
+          $(".missions-list").empty();
+          if (categoriesLength == 0){
+            $(".missions-list").addClass("row");
+          }
+          w.$injector.invoke(function($compile) {
+            var missionContent = "";
+            if (categoriesLength > 0){
+              //if there are user-defined categories, loop over them
+              for (var i = 0; i < categoriesLength; i++){
+                missionContent += "<div class='panel panel-default'><div class='panel-heading' role='tab' id='header-" + categoryIDs[i] + "'>";
+                missionContent += "<h4 class='panel-title'><a ng-click='categoryCollapse["+(i+1)+"] = !categoryCollapse["+(i+1)+"]' ng-class='{\"collapsed\" : !categoryCollapse["+(i+1)+"]}' role='button' data-toggle='collapse'>";
+                missionContent += categoryNames[i];
+                missionContent += "</a></h4></div><div class='panel-collapse collapse' ng-class='{\"in\" : categoryCollapse["+(i+1)+"]}' role='tabpanel'><div class='panel-body'>";
+                missionContent += "<div class='row'>";
+                if (!categoryContent[i] || categoryContent[i].length == 0){
+                  //no missions so far!
+                  missionContent += "<div class='col-xs-12'>No missions added to the category yet</div>";
+                } else {
+                  for (var j = 0; j < categoryContent[i].length - 1; j++){
+                    var mission = categoryContent[i][j];
+                    missionContent += mission + "</br>";
+                  }
+                }
+                missionContent +="</div></div></div></div>";
+              }
+              missionContent += "</div>";
+              //add unsorted missions if there are any
+              var missionPrefixContent = "<div class='panel-group' id='accordion' role='tablist' aria-multiselectable='true' style='width: 100%'>";
+              missionPrefixContent += "<div class='panel panel-default'><div class='panel-heading' role='tab' id='header-unsorted'>";
+              missionPrefixContent += "<h4 class='panel-title'><a ng-click='categoryCollapse[0] = !categoryCollapse[0]' ng-class='{\"collapsed\" : !categoryCollapse[0]}' role='button' data-toggle='collapse'>Unsorted Missions</a></h4></div><div class='panel-collapse collapse' ng-class='{\"in\" : categoryCollapse[0]}' role='tabpanel'><div class='panel-body'>";
+              missionPrefixContent += "<div class='row'>";
+              for (var i = 0; i < missionScope.missions.length; i++) {
+                  var mission = missionScope.missions[i];
+                  missionPrefixContent += generateMission(mission, i);
+              }
+              missionPrefixContent +="</div></div></div></div>";
+
+              missionContent = missionPrefixContent + missionContent;
+            } else {
+              //if no user-defined categories, just loop through the missions
+              for (var i = 0; i < missionScope.missions.length; i++) {
+                  var mission = missionScope.missions[i];
+                  missionContent += generateMission(mission, i);
+              }
+            }
+              // Pass our fragment content to $compile, and call the function that $compile returns with the scope.
+              var compiledContent = $compile(missionContent)(missionScope);
+              // Put the output of the compilation in to the page using jQuery
+              $('.missions-list').append(compiledContent);
+          });
+        }
         missionScope.createCategory = function(){
           var categoryName = prompt("Please enter a name for your new category","New category name");
           if (categoryName == null || categoryName == "") {
@@ -321,18 +377,12 @@ function init() {
             w.localStorage.setItem('categoryIDs', categoryIDs);
             categoryContent.push([]);
             w.localStorage.setItem('categoryContent' + (categoriesLength - 1), []);
-            missionListSetup(missionScope);
+            generateAllMissions();
           }
         }
         missionScope.nukeCategories = function(){
           w.localStorage.clear();
-          missionListSetup(missionScope);
-        }
-
-        missionScope.missions = w.$filter("orderBy")(missionScope.missions, 'definition.name');
-        $(".missions-list").empty();
-        if (categoriesLength == 0){
-          $(".missions-list").addClass("row");
+          generateAllMissions();
         }
 
         //compiling the buttons
@@ -348,53 +398,10 @@ function init() {
         });
         $('.list .bordered-panel').append($('.list div:not(.bordered-panel) button.yellow.create-mission-button'));
 
-        //compiling the missions
-        w.$injector.invoke(function($compile) {
-          var missionContent = "";
-          if (categoriesLength > 0){
-            //if there are user-defined categories, loop over them
-            for (var i = 0; i < categoriesLength; i++){
-              missionContent += "<div class='panel panel-default'><div class='panel-heading' role='tab' id='header-" + categoryIDs[i] + "'>";
-              missionContent += "<h4 class='panel-title'><a ng-click='categoryCollapse["+(i+1)+"] = !categoryCollapse["+(i+1)+"]' ng-class='{\"collapsed\" : !categoryCollapse["+(i+1)+"]}' role='button' data-toggle='collapse'>";
-              missionContent += categoryNames[i];
-              missionContent += "</a></h4></div><div class='panel-collapse collapse' ng-class='{\"in\" : categoryCollapse["+(i+1)+"]}' role='tabpanel'><div class='panel-body'>";
-              missionContent += "<div class='row'>";
-              if (!categoryContent[i] || categoryContent[i].length == 0){
-                //no missions so far!
-                missionContent += "<div class='col-xs-12'>No missions added to the category yet</div>";
-              } else {
-                for (var j = 0; j < categoryContent[i].length - 1; j++){
-                  var mission = categoryContent[i][j];
-                  missionContent += mission + "</br>";
-                }
-              }
-              missionContent +="</div></div></div></div>";
-            }
-            missionContent += "</div>";
-            //add unsorted missions if there are any
-            var missionPrefixContent = "<div class='panel-group' id='accordion' role='tablist' aria-multiselectable='true' style='width: 100%'>";
-            missionPrefixContent += "<div class='panel panel-default'><div class='panel-heading' role='tab' id='header-unsorted'>";
-            missionPrefixContent += "<h4 class='panel-title'><a ng-click='categoryCollapse[0] = !categoryCollapse[0]' ng-class='{\"collapsed\" : !categoryCollapse[0]}' role='button' data-toggle='collapse'>Unsorted Missions</a></h4></div><div class='panel-collapse collapse' ng-class='{\"in\" : categoryCollapse[0]}' role='tabpanel'><div class='panel-body'>";
-            missionPrefixContent += "<div class='row'>";
-            for (var i = 0; i < missionScope.missions.length; i++) {
-                var mission = missionScope.missions[i];
-                missionPrefixContent += generateMission(mission, i);
-            }
-            missionPrefixContent +="</div></div></div></div>";
-
-            missionContent = missionPrefixContent + missionContent;
-          } else {
-            //if no user-defined categories, just loop through the missions
-            for (var i = 0; i < missionScope.missions.length; i++) {
-                var mission = missionScope.missions[i];
-                missionContent += generateMission(mission, i);
-            }
-          }
-            // Pass our fragment content to $compile, and call the function that $compile returns with the scope.
-            var compiledContent = $compile(missionContent)(missionScope);
-            // Put the output of the compilation in to the page using jQuery
-            $('.missions-list').append(compiledContent);
-        });
+        //initiating the missionScope
+        missionScope.missions = w.$filter("orderBy")(missionScope.missions, 'definition.name');
+        $(".missions-list").removeClass("row");
+        generateAllMissions();
     }
 }
 
