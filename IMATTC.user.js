@@ -22,7 +22,8 @@ $(function() {
     //Build CSS rules
     var newCssRules = "<style>"
     newCssRules += ".navbar-my-missions							{cursor: pointer;}";
-    newCssRules += ".list .missions-list 						{display: flex;flex-wrap: wrap;}"
+    newCssRules += ".list .missions-list 						{display: flex;flex-wrap: wrap;}";
+    newCssRules += ".list .create-mission-button    {margin: 0 5px;float: none!important;display: inline-block;}"
     newCssRules += ".missions-list .mission 					{border: 5px solid black; margin: 0; position: relative; padding: 5px; display: block;}";
     newCssRules += ".list .mission .action-button 				{width: 100%; min-width: initial; max-width: initial;}";
     newCssRules += ".mission-header-container					{display: flex; align-items: stretch;}";
@@ -232,6 +233,7 @@ function init() {
     }
 
     function missionListSetup(missionScope) {
+        var categoriesList = w.localStorage.getItem('categoriesList') || [];
         var generateMission = function(mission, id){
           var missionState = mission.missionListState.toLowerCase();
           var newMissionCode = "<div class='mission col-sm-6 col-md-3 mission-list-item-" + missionState + "'>";
@@ -294,20 +296,72 @@ function init() {
           newMissionCode += "</div>";
           return newMissionCode;
         }
+        missionScope.createCategory = function(){
+          var categoryName = prompt("Please enter a name for your new category","New category name");
+          if (categoryName == null || categoryName == "") {
+            //no result
+          } else {
+            //create category with categoryName
+            // ID generator taken from https://stackoverflow.com/a/47496558/6447397
+            var newCategory = {
+              name: categoryName,
+              id: [...Array(6)].map(() => Math.random().toString(36)[3]).join(''),
+              missions: []
+            }
+            categoriesList.push(newCategory);
+            w.localStorage.setItem('categoriesList', categoriesList);
+            missionListSetup(missionScope);
+          }
+        }
+        missionScope.nukeCategories = function(){
+          w.localStorage.clear();
+          missionListSetup(missionScope);
+        }
 
         missionScope.missions = w.$filter("orderBy")(missionScope.missions, 'definition.name');
         $(".missions-list").empty();
-        var categoriesList = w.localStorage.getItem('categoriesList') || [];
         if (categoriesList.length == 0){
           $(".missions-list").addClass("row");
         }
 
-        //w.localStorage.setItem('arrayTest', testArray);
+        //compiling the buttons
+        w.$injector.invoke(function($compile) {
+            var buttonContent = "<div class='bordered-panel'>";
+            buttonContent += "<button ng-click='createCategory()' class='yellow create-mission-button'>Create New Category</button>";
+            buttonContent += "<button ng-click='nukeCategories()' class='yellow create-mission-button'>NUKE EVERYTHING</button>";
+            buttonContent += "</div>";
+            // Pass our fragment content to $compile, and call the function that $compile returns with the scope.
+            var compiledContent = $compile(buttonContent)(missionScope);
+            // Put the output of the compilation in to the page using jQuery
+            $('.list').prepend(compiledContent);
+        });
+        $('.list .bordered-panel').append($('.list div:not(.bordered-panel) button.yellow.create-mission-button'));
 
+        //compiling the missions
         w.$injector.invoke(function($compile) {
           var missionContent = "";
           if (categoriesList.length < 0){
             //if there are user-defined categories, loop over them
+            missionContent += "<div class='panel-group' id='accordion' role='tablist' aria-multiselectable='true'>";
+            for (var i = 0; i < categoriesList.length; i++){
+              var category = categoriesList[i];
+              missionContent += "<div class='panel panel-default'><div class='panel-heading' role='tab' id='header-" + category.id + "'>";
+              missionContent += "<h4 class='panel-title'><a class='collapsed' role='button' data-toggle='collapse' data-parent=#accordion' href='#" + category.id + "' aria-expanded='true' aria-controls='" + category.id + "'>";
+              missionContent += category.name;
+              missionContent += "</a></h4></div><div id='" + category.id + "' class='panel-collapse collapse' role='tabpanel' aria-labelledby='header-" + category.id + "'><div class='panel-body'>";
+              missionContent += "<div class='row'>"
+              if (!category.missions || category.missions.length == 0){
+                //no missions so far!
+                missionContent += "No missions added to the category yet";
+              } else {
+                for (var j = 0; j < category.missions.length; j++){
+                  var mission = category.missions[j];
+                  missionContent += mission.name + "</br>";
+                }
+              }
+              missionContent +="</div></div></div>";
+            }
+            missionContent += "</div>";
           } else {
             //if no user-defined categories, just loop through the missions
             for (var i = 0; i < missionScope.missions.length; i++) {
@@ -319,7 +373,6 @@ function init() {
             var compiledContent = $compile(missionContent)(missionScope);
             // Put the output of the compilation in to the page using jQuery
             $('.missions-list').append(compiledContent);
-
         });
     }
 }
