@@ -250,7 +250,22 @@ function init() {
         //and one for unsorted missions
         missionScope.categoryCollapse.push(true);
 
-        var generateMission = function(mission, id, categorised){
+        missionScope.selectACategory = function (mission) {
+          missionScope.selectedCategoryMissionId = mission.mission_guid;
+          $('#addCateModel .modal-title').text('Add ' + mission.definition.name + ' to...');
+        }
+
+        missionScope.addToCategory = function(){
+          $(".modal-backdrop.fade").remove()
+          var categoryID = missionScope.selectedCategoryID;
+          categoryContent[categoryID].push(missionScope.selectedCategoryMissionId);
+          missionScope.selectedCategoryMissionId = null;
+          w.localStorage.setItem('categoryContent' + categoryID, categoryContent[categoryID]);
+          missionScope.categoryCollapse[categoryID] = true;
+          generateAllMissions();
+        }
+
+        var generateMission = function(mission, id, selectedCategory){
           var missionState = mission.missionListState.toLowerCase();
           var newMissionCode = "<div class='mission col-sm-6 col-md-3 mission-list-item-" + missionState + "'>";
           newMissionCode += "<div class='mission-header-container'><div>";
@@ -308,6 +323,13 @@ function init() {
               newMissionCode += "<li><a role='button' ng-click='button1Clicked(missions[" + id + "])'>" + missionScope.getButton1Title(mission) + "</a></li>";
           if (missionScope.getButton2Title(mission))
               newMissionCode += "<li><a role='button' ng-click='button2Clicked(missions[" + id + "])'>" + missionScope.getButton2Title(mission) + "</a></li>";
+          newMissionCode += "<li role='separator' class='divider'></li>";
+          if (selectedCategory == false){
+            //adding unsorted mission to category
+            newMissionCode += "<li><a role='button' ng-click='selectACategory(missions[" + id + "])' data-toggle='modal' data-target='#addCateModel'>Add To Category...</a></li>"
+          } else {
+            //removing a mission from a category
+          }
           newMissionCode += "</ul></div>"
           newMissionCode += "</div>";
           return newMissionCode;
@@ -332,7 +354,7 @@ function init() {
                   //no missions so far!
                   missionContent += "<div class='col-xs-12'>No missions added to the category yet</div>";
                 } else {
-                  for (var j = 0; j < categoryContent[i].length - 1; j++){
+                  for (var j = 0; j < categoryContent[i].length; j++){
                     var mission = categoryContent[i][j];
                     missionContent += mission + "</br>";
                   }
@@ -345,19 +367,27 @@ function init() {
               missionContent += "<div class='row'>";
               for (var i = 0; i < missionScope.missions.length; i++) {
                   var mission = missionScope.missions[i];
-                  missionContent += generateMission(mission, i);
+                  missionContent += generateMission(mission, i, false);
               }
               missionContent +="</div></div></div></div>";
 
               missionContent += "</div>";
-
             } else {
               //if no user-defined categories, just loop through the missions
               for (var i = 0; i < missionScope.missions.length; i++) {
                   var mission = missionScope.missions[i];
-                  missionContent += generateMission(mission, i);
+                  missionContent += generateMission(mission, i, false);
               }
             }
+            //modal for adding missions to categories
+            missionContent += "<div class='modal fade' id='addCateModel' tabindex='-1' role='dialog'><div class='modal-dialog' role='document'><div class='modal-content'><div class='modal-header'><button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button><h4 class='modal-title'>{{missionTitle}}</h4></div><div class='modal-body'>";
+            missionContent += "<select class='form-control' ng-model='selectedCategoryID' ng-change='addToCategory()' >";
+            for (var i=0; i<categoriesLength;i++ ){
+              missionContent += "<option value='"+i+"' data-dismiss='modal'>"+categoryNames[i]+"</option>";
+            }
+            missionContent += "</select>";
+            missionContent += "</div></div></div></div>";
+
               // Pass our fragment content to $compile, and call the function that $compile returns with the scope.
               var compiledContent = $compile(missionContent)(missionScope);
               // Put the output of the compilation in to the page using jQuery
