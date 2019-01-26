@@ -251,6 +251,7 @@ function init() {
         }
         //and one for unsorted missions
         missionScope.categoryCollapse.push(true);
+        missionScope.selectedCategoryMissionId = null;
 
         missionScope.selectACategory = function (mission) {
           missionScope.selectedCategoryMissionId = mission.mission_guid;
@@ -265,6 +266,7 @@ function init() {
           missionScope.selectedCategoryMissionId = null;
           w.localStorage.setItem('categoryContent' + categoryID, categoryContent[categoryID]);
           missionScope.categoryCollapse[categoryID] = true;
+          missionScope.selectedCategoryID = null;
           generateAllMissions();
         }
 
@@ -277,6 +279,42 @@ function init() {
           w.localStorage.setItem('categoryContent' + category, categoryContent[category]);
           missionScope.categoryCollapse[category] = true;
           generateAllMissions();
+        }
+
+        missionScope.createCategory = function(){
+          var categoryName = prompt("Please enter a name for your new category","New category name");
+          if (categoryName == null || categoryName == "") {
+            //no result
+          } else {
+            //create category elements in various places
+            // ID generator taken from https://stackoverflow.com/a/47496558/6447397
+            categoriesLength++;
+            w.localStorage.setItem('categoriesLength', categoriesLength);
+            categoryNames.push(categoryName);
+            w.localStorage.setItem('categoryNames', categoryNames);
+            categoryIDs.push([...Array(6)].map(() => Math.random().toString(36)[3]).join(''));
+            w.localStorage.setItem('categoryIDs', categoryIDs);
+            categoryContent.push([]);
+            w.localStorage.setItem('categoryContent' + (categoriesLength - 1), []);
+            generateAllMissions();
+          }
+        }
+        missionScope.nukeCategories = function(){
+          w.localStorage.clear();
+          generateAllMissions();
+        }
+
+        missionScope.deleteCategory = function (category) {
+          if(confirm("Are you sure you want to delete the " +categoryNames[category]+ " category? Any missions you've placed in this category will be retured to Unsorted missions.")){
+            categoriesLength--;
+            w.localStorage.setItem('categoriesLength', categoriesLength);
+            categoryNames.splice(category,1);
+            w.localStorage.setItem('categoryNames', categoryNames);
+            categoryContent.splice(category,1);
+            w.localStorage.removeItem('categoryContent' + (category - 1));
+            missionScope.categoryCollapse.splice(category,1);
+            generateAllMissions();
+          }
         }
 
         var generateMission = function(mission, id, selectedCategory){
@@ -365,7 +403,7 @@ function init() {
                 missionContent += "<h4 class='panel-title' ng-class='{\"collapsed\" : !categoryCollapse["+i+"]}'><a ng-click='categoryCollapse["+i+"] = !categoryCollapse["+i+"]' role='button' data-toggle='collapse'>";
                 missionContent += categoryNames[i];
                 missionContent += "</a></h4></div><div class='panel-collapse collapse' ng-class='{\"in\" : categoryCollapse["+i+"]}' role='tabpanel'><div class='panel-body'>";
-                missionContent += "<div class='row'>";
+                missionContent += "<div class='row'><div class='col-xs-12'><button class='btn btn-default'style='float: right!important;margin: 5px 0;' ng-click='deleteCategory("+i+")'>Delete Category</button></div>";
                 if (!categoryContent[i] || categoryContent[i].length == 0){
                   //no missions so far!
                   missionContent += "<div class='col-xs-12'>No missions added to the category yet</div>";
@@ -416,28 +454,6 @@ function init() {
               // Put the output of the compilation in to the page using jQuery
               $('.missions-list').append(compiledContent);
           });
-        }
-        missionScope.createCategory = function(){
-          var categoryName = prompt("Please enter a name for your new category","New category name");
-          if (categoryName == null || categoryName == "") {
-            //no result
-          } else {
-            //create category elements in various places
-            // ID generator taken from https://stackoverflow.com/a/47496558/6447397
-            categoriesLength++;
-            w.localStorage.setItem('categoriesLength', categoriesLength);
-            categoryNames.push(categoryName);
-            w.localStorage.setItem('categoryNames', categoryNames);
-            categoryIDs.push([...Array(6)].map(() => Math.random().toString(36)[3]).join(''));
-            w.localStorage.setItem('categoryIDs', categoryIDs);
-            categoryContent.push([]);
-            w.localStorage.setItem('categoryContent' + (categoriesLength - 1), []);
-            generateAllMissions();
-          }
-        }
-        missionScope.nukeCategories = function(){
-          w.localStorage.clear();
-          generateAllMissions();
         }
 
         //compiling the buttons
