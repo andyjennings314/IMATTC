@@ -38,7 +38,8 @@ $(function() {
     newCssRules += ".missions-list .panel-default>.panel-heading a:hover {color: black;}";
     newCssRules += ".missions-list .panel-default>.panel-heading+.panel-collapse>.panel-body {border-top-color: black; padding-top: 0;}";
     newCssRules += ".missions-list .panel-heading a:after {  font-family: 'Glyphicons Halflings';  content: '\\e114';  float: right;  color: black;  position: relative;  left: 10px; }";
-    newCssRules += ".missions-list .panel-heading h4.collapsed a:after {content: '\\e080'; }"
+    newCssRules += ".missions-list .panel-heading h4.collapsed a:after {content: '\\e080'; }";
+    newCssRules += ".modal {color: black;}";
 
     newCssRules += ".mission-list-item-published 				{background-image: none; background: darkgreen;color: lightgreen;}";
     newCssRules += ".list .mission .mission-title-published 	{color: lightgreen;}";
