@@ -37,6 +37,8 @@ $(function() {
     newCssRules += ".missions-list .panel-default>.panel-heading {color: black; background: #5afbea; border-radius: 0;}";
     newCssRules += ".missions-list .panel-default>.panel-heading a:hover {color: black;}";
     newCssRules += ".missions-list .panel-default>.panel-heading+.panel-collapse>.panel-body {border-top-color: black; padding-top: 0;}";
+    newCssRules += ".missions-list .panel-heading a:after {  font-family: 'Glyphicons Halflings';  content: '\\e114';  float: right;  color: black;  position: relative;  left: 10px; }";
+    newCssRules += ".missions-list .panel-heading h4.collapsed a:after {content: '\\e080'; }"
 
     newCssRules += ".mission-list-item-published 				{background-image: none; background: darkgreen;color: lightgreen;}";
     newCssRules += ".list .mission .mission-title-published 	{color: lightgreen;}";
@@ -360,7 +362,7 @@ function init() {
               missionContent += "<div class='panel-group' id='accordion' role='tablist' aria-multiselectable='true' style='width: 100%'>";
               for (var i = 0; i < categoriesLength; i++){
                 missionContent += "<div class='panel panel-default'><div class='panel-heading' role='tab' id='header-" + categoryIDs[i] + "'>";
-                missionContent += "<h4 class='panel-title'><a ng-click='categoryCollapse["+i+"] = !categoryCollapse["+i+"]' ng-class='{\"collapsed\" : !categoryCollapse["+i+"]}' role='button' data-toggle='collapse'>";
+                missionContent += "<h4 class='panel-title' ng-class='{\"collapsed\" : !categoryCollapse["+i+"]}'><a ng-click='categoryCollapse["+i+"] = !categoryCollapse["+i+"]' role='button' data-toggle='collapse'>";
                 missionContent += categoryNames[i];
                 missionContent += "</a></h4></div><div class='panel-collapse collapse' ng-class='{\"in\" : categoryCollapse["+i+"]}' role='tabpanel'><div class='panel-body'>";
                 missionContent += "<div class='row'>";
@@ -382,7 +384,7 @@ function init() {
               }
               //add unsorted missions if there are any
               missionContent += "<div class='panel panel-default'><div class='panel-heading' role='tab' id='header-unsorted'>";
-              missionContent += "<h4 class='panel-title'><a ng-click='categoryCollapse["+categoriesLength+"] = !categoryCollapse["+categoriesLength+"]' ng-class='{\"collapsed\" : !categoryCollapse["+categoriesLength+"]}' role='button' data-toggle='collapse'>Unsorted Missions</a></h4></div><div class='panel-collapse collapse' ng-class='{\"in\" : categoryCollapse["+categoriesLength+"]}' role='tabpanel'><div class='panel-body'>";
+              missionContent += "<h4 class='panel-title' ng-class='{\"collapsed\" : !categoryCollapse["+categoriesLength+"]}'><a ng-click='categoryCollapse["+categoriesLength+"] = !categoryCollapse["+categoriesLength+"]' role='button' data-toggle='collapse'>Unsorted Missions</a></h4></div><div class='panel-collapse collapse' ng-class='{\"in\" : categoryCollapse["+categoriesLength+"]}' role='tabpanel'><div class='panel-body'>";
               missionContent += "<div class='row'>";
               for (var i = 0; i < categoryMissions.length; i++) {
                 if (categoryMissions[i] != null){
