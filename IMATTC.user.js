@@ -25,6 +25,7 @@ $(function() {
     newCssRules += ".list > .bordered-panel {padding: 15px;}";
     newCssRules += ".list .missions-list,.missions-list .panel-body .row 				{display: flex;flex-wrap: wrap;}";
     newCssRules += ".list .create-mission-button    {margin: 0 5px;float: none!important;display: inline-block;}"
+    newCssRules += ".missions-list {opacity: 0; transition: opacity 0.5s} .missions-list.ready {opacity:1}";
     newCssRules += ".missions-list .mission 					{border-width: 2px;  background-color: #050505; margin: 10px 0 0; position: relative; padding: 5px; display: block;}";
     newCssRules += ".list .mission .action-button 				{width: 100%; min-width: initial; max-width: initial;}";
     newCssRules += ".mission-header-container					{display: flex; align-items: stretch;}";
@@ -470,7 +471,7 @@ function init() {
 
         //initiating the missionScope
         missionScope.missions = w.$filter("orderBy")(missionScope.missions, 'definition.name');
-        $(".missions-list").removeClass("row");
+        $(".missions-list").removeClass("row").addClass('ready');
         generateAllMissions();
     }
 }
