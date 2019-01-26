@@ -25,7 +25,7 @@ $(function() {
     newCssRules += ".list > .bordered-panel {padding: 15px;}";
     newCssRules += ".list .missions-list,.missions-list .panel-body .row 				{display: flex;flex-wrap: wrap;}";
     newCssRules += ".list .create-mission-button    {margin: 0 5px;float: none!important;display: inline-block;}"
-    newCssRules += ".missions-list .mission 					{border: 2px solid;  background-color: #050505; margin: 10px 0 0; position: relative; padding: 5px; display: block;}";
+    newCssRules += ".missions-list .mission 					{border-width: 2px;  background-color: #050505; margin: 10px 0 0; position: relative; padding: 5px; display: block;}";
     newCssRules += ".list .mission .action-button 				{width: 100%; min-width: initial; max-width: initial;}";
     newCssRules += ".mission-header-container					{display: flex; align-items: stretch;}";
     newCssRules += ".mission-header-container div:nth-of-type(1){padding-right: 5px; width: 60px}";
