@@ -22,6 +22,7 @@ $(function() {
     //Build CSS rules
     var newCssRules = "<style>"
     newCssRules += ".navbar-my-missions							{cursor: pointer;}";
+    newCssRules += ".list > .bordered-panel {padding: 15px;}";
     newCssRules += ".list .missions-list,.missions-list .panel-body .row 				{display: flex;flex-wrap: wrap;}";
     newCssRules += ".list .create-mission-button    {margin: 0 5px;float: none!important;display: inline-block;}"
     newCssRules += ".missions-list .mission 					{border: 5px solid black; margin: 0; position: relative; padding: 5px; display: block;}";
@@ -457,7 +458,7 @@ function init() {
         w.$injector.invoke(function($compile) {
             var buttonContent = "<div class='bordered-panel'>";
             buttonContent += "<button ng-click='createCategory()' class='yellow create-mission-button'>Create New Category</button>";
-            buttonContent += "<button ng-click='nukeCategories()' class='yellow create-mission-button'>NUKE EVERYTHING</button>";
+            //buttonContent += "<button ng-click='nukeCategories()' class='yellow create-mission-button'>NUKE EVERYTHING</button>";
             buttonContent += "</div>";
             // Pass our fragment content to $compile, and call the function that $compile returns with the scope.
             var compiledContent = $compile(buttonContent)(missionScope);
