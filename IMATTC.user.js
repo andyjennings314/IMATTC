@@ -256,12 +256,24 @@ function init() {
         }
 
         missionScope.addToCategory = function(){
-          $(".modal-backdrop.fade").remove()
+          $(".modal-backdrop.fade").remove();
+          $("body").removeClass("modal-open");
           var categoryID = missionScope.selectedCategoryID;
           categoryContent[categoryID].push(missionScope.selectedCategoryMissionId);
           missionScope.selectedCategoryMissionId = null;
           w.localStorage.setItem('categoryContent' + categoryID, categoryContent[categoryID]);
           missionScope.categoryCollapse[categoryID] = true;
+          generateAllMissions();
+        }
+
+        missionScope.removeFromCategory = function (category, mission){
+          for (var i = 0;i<categoryContent[category].length;i++){
+            if (categoryContent[category][i] == mission.mission_guid){
+              categoryContent[category].splice(i,1);
+            }
+          }
+          w.localStorage.setItem('categoryContent' + category, categoryContent[category]);
+          missionScope.categoryCollapse[category] = true;
           generateAllMissions();
         }
 
@@ -324,11 +336,12 @@ function init() {
           if (missionScope.getButton2Title(mission))
               newMissionCode += "<li><a role='button' ng-click='button2Clicked(missions[" + id + "])'>" + missionScope.getButton2Title(mission) + "</a></li>";
           newMissionCode += "<li role='separator' class='divider'></li>";
-          if (selectedCategory == false){
+          if (selectedCategory === false){
             //adding unsorted mission to category
-            newMissionCode += "<li><a role='button' ng-click='selectACategory(missions[" + id + "])' data-toggle='modal' data-target='#addCateModel'>Add To Category...</a></li>"
+            newMissionCode += "<li><a role='button' ng-click='selectACategory(missions[" + id + "])' data-toggle='modal' data-target='#addCateModel'>Add To Category...</a></li>";
           } else {
             //removing a mission from a category
+            newMissionCode += "<li><a role='button' ng-click='removeFromCategory("+selectedCategory+", missions[" + id + "])'>Remove From Category</a></li>";
           }
           newMissionCode += "</ul></div>"
           newMissionCode += "</div>";
@@ -342,8 +355,9 @@ function init() {
           w.$injector.invoke(function($compile) {
             var missionContent = "";
             if (categoriesLength > 0){
-              missionContent += "<div class='panel-group' id='accordion' role='tablist' aria-multiselectable='true' style='width: 100%'>";
               //if there are user-defined categories, loop over them
+              let categoryMissions = angular.copy(missionScope.missions);
+              missionContent += "<div class='panel-group' id='accordion' role='tablist' aria-multiselectable='true' style='width: 100%'>";
               for (var i = 0; i < categoriesLength; i++){
                 missionContent += "<div class='panel panel-default'><div class='panel-heading' role='tab' id='header-" + categoryIDs[i] + "'>";
                 missionContent += "<h4 class='panel-title'><a ng-click='categoryCollapse["+i+"] = !categoryCollapse["+i+"]' ng-class='{\"collapsed\" : !categoryCollapse["+i+"]}' role='button' data-toggle='collapse'>";
@@ -355,8 +369,13 @@ function init() {
                   missionContent += "<div class='col-xs-12'>No missions added to the category yet</div>";
                 } else {
                   for (var j = 0; j < categoryContent[i].length; j++){
-                    var mission = categoryContent[i][j];
-                    missionContent += mission + "</br>";
+                    var missionID = categoryContent[i][j];
+                    for (var k = 0; k < categoryMissions.length; k++){
+                      if (categoryMissions[k] && categoryMissions[k].mission_guid == missionID){
+                        missionContent += generateMission(categoryMissions[k], k, i);
+                        categoryMissions[k] = null;
+                      }
+                    }
                   }
                 }
                 missionContent +="</div></div></div></div>";
@@ -365,9 +384,11 @@ function init() {
               missionContent += "<div class='panel panel-default'><div class='panel-heading' role='tab' id='header-unsorted'>";
               missionContent += "<h4 class='panel-title'><a ng-click='categoryCollapse["+categoriesLength+"] = !categoryCollapse["+categoriesLength+"]' ng-class='{\"collapsed\" : !categoryCollapse["+categoriesLength+"]}' role='button' data-toggle='collapse'>Unsorted Missions</a></h4></div><div class='panel-collapse collapse' ng-class='{\"in\" : categoryCollapse["+categoriesLength+"]}' role='tabpanel'><div class='panel-body'>";
               missionContent += "<div class='row'>";
-              for (var i = 0; i < missionScope.missions.length; i++) {
-                  var mission = missionScope.missions[i];
+              for (var i = 0; i < categoryMissions.length; i++) {
+                if (categoryMissions[i] != null){
+                  var mission = categoryMissions[i];
                   missionContent += generateMission(mission, i, false);
+                }
               }
               missionContent +="</div></div></div></div>";
 
