@@ -241,7 +241,6 @@ function init() {
     function missionListSetup(missionScope) {
         //unload category data in w.localStorage
         var categoriesLength = parseInt(w.localStorage.getItem('categoriesLength')) || 0;
-        var categoryIDs = w.localStorage.getItem('categoryIDs') ? w.localStorage.getItem('categoryIDs').split(',') : [];
         var categoryNames = w.localStorage.getItem('categoryNames') ? w.localStorage.getItem('categoryNames').split(',') : [];
         var categoryContent = [];
         missionScope.categoryCollapse = [];
@@ -287,13 +286,10 @@ function init() {
             //no result
           } else {
             //create category elements in various places
-            // ID generator taken from https://stackoverflow.com/a/47496558/6447397
             categoriesLength++;
             w.localStorage.setItem('categoriesLength', categoriesLength);
             categoryNames.push(categoryName);
             w.localStorage.setItem('categoryNames', categoryNames);
-            categoryIDs.push([...Array(6)].map(() => Math.random().toString(36)[3]).join(''));
-            w.localStorage.setItem('categoryIDs', categoryIDs);
             categoryContent.push([]);
             w.localStorage.setItem('categoryContent' + (categoriesLength - 1), []);
             generateAllMissions();
@@ -399,7 +395,7 @@ function init() {
               let categoryMissions = angular.copy(missionScope.missions);
               missionContent += "<div class='panel-group' id='accordion' role='tablist' aria-multiselectable='true' style='width: 100%'>";
               for (var i = 0; i < categoriesLength; i++){
-                missionContent += "<div class='panel panel-default'><div class='panel-heading' role='tab' id='header-" + categoryIDs[i] + "'>";
+                missionContent += "<div class='panel panel-default'><div class='panel-heading' role='tab'>";
                 missionContent += "<h4 class='panel-title' ng-class='{\"collapsed\" : !categoryCollapse["+i+"]}'><a ng-click='categoryCollapse["+i+"] = !categoryCollapse["+i+"]' role='button' data-toggle='collapse'>";
                 missionContent += categoryNames[i];
                 missionContent += "</a></h4></div><div class='panel-collapse collapse' ng-class='{\"in\" : categoryCollapse["+i+"]}' role='tabpanel'><div class='panel-body'>";
