@@ -34,11 +34,12 @@ $(function() {
     newCssRules += ".button, button 							{background-image: none;}";
     newCssRules += ".mission .name.glyphicon 					{font-size: 40px;}";
     newCssRules += ".mission .name:not(.glyphicon) 				{text-align: center; display: block;}";
+    newCssRules += ".mission table {margin: 5px 0 10px;}";
     newCssRules += ".missions-list .panel-default { border-color: #5afbea; background-color: black; border-radius: 0;}";
-    newCssRules += ".missions-list .panel-default>.panel-heading {color: black; background: #5afbea; border-radius: 0;}";
-    newCssRules += ".missions-list .panel-default>.panel-heading a:hover {color: black;}";
+    newCssRules += ".missions-list .panel-default>.panel-heading {color: #5afbea; background: #1f4549; border-radius: 0;}";
+    newCssRules += ".missions-list .panel-default>.panel-heading a:hover {color: #5afbea;}";
     newCssRules += ".missions-list .panel-default>.panel-heading+.panel-collapse>.panel-body {border-top-color: black; padding-top: 0;}";
-    newCssRules += ".missions-list .panel-heading a:after {  font-family: 'Glyphicons Halflings';  content: '\\e114';  float: right;  color: black;  position: relative;  left: 10px; }";
+    newCssRules += ".missions-list .panel-heading a:after {  font-family: 'Glyphicons Halflings';  content: '\\e114';  float: right;  color: 5afbea;  position: relative;  left: 10px; }";
     newCssRules += ".missions-list .panel-heading h4.collapsed a:after {content: '\\e080'; }";
     newCssRules += ".modal {color: black;}";
 
@@ -367,7 +368,7 @@ function init() {
               newMissionCode += "<td><i class='glyphicon glyphicon-user'></i> " + mission.stats.num_completed + "</td>";
           }
           newMissionCode += "</tr></table>";
-          newMissionCode += "<div class='dropup'><button class='button action-button dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>Perform Mission Action <span class='caret'></span></button>";
+          newMissionCode += "<div class='dropup'><button class='button action-button dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>Perform Mission Action</button>";
           newMissionCode += "<ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>"
           if (missionScope.getButton1Title(mission))
               newMissionCode += "<li><a role='button' ng-click='button1Clicked(missions[" + id + "])'>" + missionScope.getButton1Title(mission) + "</a></li>";
