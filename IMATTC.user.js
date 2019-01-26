@@ -255,7 +255,7 @@ function init() {
 
         missionScope.selectACategory = function (mission) {
           missionScope.selectedCategoryMissionId = mission.mission_guid;
-          $('#addCateModel .modal-title').text('Add ' + mission.definition.name + ' to...');
+          $('#addCateModel .modal-title').text('Add \"' + mission.definition.name + '\" to...');
         }
 
         missionScope.addToCategory = function(){
