@@ -25,7 +25,7 @@ $(function() {
     newCssRules += ".list > .bordered-panel {padding: 15px;}";
     newCssRules += ".list .missions-list,.missions-list .panel-body .row 				{display: flex;flex-wrap: wrap;}";
     newCssRules += ".list .create-mission-button    {margin: 0 5px;float: none!important;display: inline-block;}"
-    newCssRules += ".missions-list .mission 					{border: 5px solid black; margin: 0; position: relative; padding: 5px; display: block;}";
+    newCssRules += ".missions-list .mission 					{border: 2px solid;  background-color: #050505; margin: 10px 0 0; position: relative; padding: 5px; display: block;}";
     newCssRules += ".list .mission .action-button 				{width: 100%; min-width: initial; max-width: initial;}";
     newCssRules += ".mission-header-container					{display: flex; align-items: stretch;}";
     newCssRules += ".mission-header-container div:nth-of-type(1){padding-right: 5px; width: 60px}";
@@ -42,42 +42,42 @@ $(function() {
     newCssRules += ".missions-list .panel-heading h4.collapsed a:after {content: '\\e080'; }";
     newCssRules += ".modal {color: black;}";
 
-    newCssRules += ".mission-list-item-published 				{background-image: none; background: darkgreen;color: lightgreen;}";
+    newCssRules += ".mission-list-item-published 				{background-image: none; border-color: darkgreen;color: lightgreen;}";
     newCssRules += ".list .mission .mission-title-published 	{color: lightgreen;}";
     newCssRules += ".mission-list-item-published .table-bordered * {border-color: lightgreen;}";
     newCssRules += ".mission-list-item-published .button		{color: lightgreen; border-color: lightgreen; background-color: #004d00;}";
     newCssRules += ".mission-list-item-published .button:hover	{background-color: #003300;}";
     newCssRules += ".mission-list-item-published .button .caret	{border-bottom-color: lightgreen;}";
 
-    newCssRules += ".mission-list-item-draft 					{background-image: none; background: #a42e12;color: #f7ba5f;}";
+    newCssRules += ".mission-list-item-draft 					{background-image: none; border-color: #a42e12;color: #f7ba5f;}";
     newCssRules += ".list .mission .mission-title-draft 	{color: #f7ba5f;}";
     newCssRules += ".mission-list-item-draft .table-bordered * {border-color: #f7ba5f;}";
     newCssRules += ".mission-list-item-draft .button		{color: #f7ba5f; border-color: #f7ba5f; background-color: #8a280f;}";
     newCssRules += ".mission-list-item-draft .button:hover	{background-color: #73210d;}";
     newCssRules += ".mission-list-item-draft .button .caret	{border-bottom-color: #f7ba5f;}";
 
-    newCssRules += ".mission-list-item-draft_of_published_mission {background-image: none; background: olive;color: greenyellow;}";
+    newCssRules += ".mission-list-item-draft_of_published_mission {background-image: none; border-color: olive;color: greenyellow;}";
     newCssRules += ".list .mission .mission-title-draft_of_published_mission 	{color: greenyellow;}";
     newCssRules += ".mission-list-item-draft_of_published_mission .table-bordered * {border-color: greenyellow;}";
     newCssRules += ".mission-list-item-draft_of_published_mission .button		{color: greenyellow; border-color: greenyellow; background-color: #666600;}";
     newCssRules += ".mission-list-item-draft_of_published_mission .button:hover	{background-color: #4d4d00;}";
     newCssRules += ".mission-list-item-draft_of_published_mission .button .caret	{border-bottom-color: greenyellow;}";
 
-    newCssRules += ".mission-list-item-submitted				{background-image: none; background: darkgoldenrod;color: gold;}";
+    newCssRules += ".mission-list-item-submitted				{background-image: none; border-color: darkgoldenrod;color: gold;}";
     newCssRules += ".list .mission .mission-title-submitted 	{color: gold;}";
     newCssRules += ".mission-list-item-submitted .table-bordered * {border-color: gold;}";
     newCssRules += ".mission-list-item-submitted .button		{color: gold; border-color: gold; background-color: #916a08;}";
     newCssRules += ".mission-list-item-submitted .button:hover	{background-color: #785807;}";
     newCssRules += ".mission-list-item-submitted .button .caret	{border-bottom-color: gold;}";
 
-    newCssRules += ".mission-list-item-disabled 				{background-image: none; background: #6b6b6b;color: red;}";
+    newCssRules += ".mission-list-item-disabled 				{background-image: none; border-color: #6b6b6b;color: red;}";
     newCssRules += ".list .mission .mission-title-disabled	 	{color: red;}";
     newCssRules += ".mission-list-item-disabled .table-bordered * {border-color: red;}";
     newCssRules += ".mission-list-item-disabled .button		{color: red; border-color: red; background-color: #595959;}";
     newCssRules += ".mission-list-item-disabled .button:hover	{background-color: #4d4d4d;}";
     newCssRules += ".mission-list-item-disabled .button .caret	{border-bottom-color: red;}";
 
-    newCssRules += ".mission-list-item-submitted_and_published	{background-image: none; background: olivedrab;color: springgreen;}";
+    newCssRules += ".mission-list-item-submitted_and_published	{background-image: none; border-color: olivedrab;color: springgreen;}";
     newCssRules += ".list .mission .mission-title-submitted_and_published 	{color: springgreen;}";
     newCssRules += ".mission-list-item-submitted_and_published .table-bordered * {border-color: springgreen;}";
     newCssRules += ".mission-list-item-submitted_and_published .button		{color: springgreen; border-color: springgreen; background-color: #5c7a1f;}";
@@ -317,7 +317,7 @@ function init() {
 
         var generateMission = function(mission, id, selectedCategory){
           var missionState = mission.missionListState.toLowerCase();
-          var newMissionCode = "<div class='mission col-sm-6 col-md-3 mission-list-item-" + missionState + "'>";
+          var newMissionCode = "<div class='col-sm-6 col-md-3'><div class='mission mission-list-item-" + missionState + "'>";
           newMissionCode += "<div class='mission-header-container'><div>";
           newMissionCode += "<img class='mission-image' src='" + (mission.definition.logo_url ? mission.definition.logo_url + "=s60-c" : "/images/button_logo.png") + "'>";
           newMissionCode += "</div><div>";
@@ -382,7 +382,7 @@ function init() {
             newMissionCode += "<li><a role='button' ng-click='removeFromCategory("+selectedCategory+", missions[" + id + "])'>Remove From Category</a></li>";
           }
           newMissionCode += "</ul></div>"
-          newMissionCode += "</div>";
+          newMissionCode += "</div></div>";
           return newMissionCode;
         }
         var generateAllMissions = function(){
