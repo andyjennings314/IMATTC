@@ -27,7 +27,7 @@ $(function() {
     newCssRules += ".list .create-mission-button    {margin: 0 5px;float: none!important;display: inline-block;}";
     newCssRules += ".missions-list, .name-view .bordered-panel, .type-view .bordered-panel {opacity: 0; transition: opacity 0.5s}";
     newCssRules += ".missions-list.ready, .name-view .bordered-panel.ready, .type-view .bordered-panel.ready {opacity:1}";
-    newCssRules += ".missions-list .mission 					{border-width: 2px;  background-color: #050505; margin: 10px 0 0; position: relative; padding: 5px; display: block;}";
+    newCssRules += ".missions-list .mission 					{border-width: 2px;  margin: 10px 0 0; position: relative; padding: 5px; display: block;}";
     newCssRules += ".list .mission .action-button 				{width: 100%; min-width: initial; max-width: initial;}";
     newCssRules += ".mission-header-container					{display: flex; align-items: stretch;}";
     newCssRules += ".mission-header-container div:nth-of-type(1){padding-right: 5px; width: 60px}";
@@ -49,42 +49,42 @@ $(function() {
     newCssRules += ".banner-preview img {border-radius: 50%;border: 3px solid goldenrod;}";
     newCssRules += ".banner-preview .col-xs-2 {padding-bottom: 15px;}";
 
-    newCssRules += ".mission-list-item-published 				{background-image: none; border-color: darkgreen;color: lightgreen;}";
+    newCssRules += ".mission-list-item-published 				{background-image: none; background: #001a00; border-color: darkgreen;color: lightgreen;}";
     newCssRules += ".list .mission .mission-title-published 	{color: lightgreen;}";
     newCssRules += ".mission-list-item-published .table-bordered * {border-color: lightgreen;}";
     newCssRules += ".mission-list-item-published .button		{color: lightgreen; border-color: lightgreen; background-color: #004d00;}";
     newCssRules += ".mission-list-item-published .button:hover	{background-color: #003300;}";
     newCssRules += ".mission-list-item-published .button .caret	{border-bottom-color: lightgreen;}";
 
-    newCssRules += ".mission-list-item-draft 					{background-image: none; border-color: #a42e12;color: #f7ba5f;}";
+    newCssRules += ".mission-list-item-draft 					{background-image: none; background-color: #170703; border-color: #a42e12;color: #f7ba5f;}";
     newCssRules += ".list .mission .mission-title-draft 	{color: #f7ba5f;}";
     newCssRules += ".mission-list-item-draft .table-bordered * {border-color: #f7ba5f;}";
     newCssRules += ".mission-list-item-draft .button		{color: #f7ba5f; border-color: #f7ba5f; background-color: #8a280f;}";
     newCssRules += ".mission-list-item-draft .button:hover	{background-color: #73210d;}";
     newCssRules += ".mission-list-item-draft .button .caret	{border-bottom-color: #f7ba5f;}";
 
-    newCssRules += ".mission-list-item-draft_of_published_mission {background-image: none; border-color: olive;color: greenyellow;}";
+    newCssRules += ".mission-list-item-draft_of_published_mission {background-image: none; background-color: #1a1a00; border-color: olive;color: greenyellow;}";
     newCssRules += ".list .mission .mission-title-draft_of_published_mission 	{color: greenyellow;}";
     newCssRules += ".mission-list-item-draft_of_published_mission .table-bordered * {border-color: greenyellow;}";
     newCssRules += ".mission-list-item-draft_of_published_mission .button		{color: greenyellow; border-color: greenyellow; background-color: #666600;}";
     newCssRules += ".mission-list-item-draft_of_published_mission .button:hover	{background-color: #4d4d00;}";
     newCssRules += ".mission-list-item-draft_of_published_mission .button .caret	{border-bottom-color: greenyellow;}";
 
-    newCssRules += ".mission-list-item-submitted				{background-image: none; border-color: darkgoldenrod;color: gold;}";
+    newCssRules += ".mission-list-item-submitted				{background-image: none; background-color: #181201; border-color: darkgoldenrod;color: gold;}";
     newCssRules += ".list .mission .mission-title-submitted 	{color: gold;}";
     newCssRules += ".mission-list-item-submitted .table-bordered * {border-color: gold;}";
     newCssRules += ".mission-list-item-submitted .button		{color: gold; border-color: gold; background-color: #916a08;}";
     newCssRules += ".mission-list-item-submitted .button:hover	{background-color: #785807;}";
     newCssRules += ".mission-list-item-submitted .button .caret	{border-bottom-color: gold;}";
 
-    newCssRules += ".mission-list-item-disabled 				{background-image: none; border-color: #6b6b6b;color: red;}";
+    newCssRules += ".mission-list-item-disabled 				{background-image: none; background-color: #0d0d0d; border-color: #6b6b6b; color: red;}";
     newCssRules += ".list .mission .mission-title-disabled	 	{color: red;}";
     newCssRules += ".mission-list-item-disabled .table-bordered * {border-color: red;}";
     newCssRules += ".mission-list-item-disabled .button		{color: red; border-color: red; background-color: #595959;}";
     newCssRules += ".mission-list-item-disabled .button:hover	{background-color: #4d4d4d;}";
     newCssRules += ".mission-list-item-disabled .button .caret	{border-bottom-color: red;}";
 
-    newCssRules += ".mission-list-item-submitted_and_published	{background-image: none; border-color: olivedrab;color: springgreen;}";
+    newCssRules += ".mission-list-item-submitted_and_published	{background-image: none; background-color: #0f1405; border-color: olivedrab;color: springgreen;}";
     newCssRules += ".list .mission .mission-title-submitted_and_published 	{color: springgreen;}";
     newCssRules += ".mission-list-item-submitted_and_published .table-bordered * {border-color: springgreen;}";
     newCssRules += ".mission-list-item-submitted_and_published .button		{color: springgreen; border-color: springgreen; background-color: #5c7a1f;}";
