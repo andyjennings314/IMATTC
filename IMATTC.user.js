@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         IMATTC
-// @version      0.4.2
+// @version      0.4.3
 // @description  A usability overhaul for the Ingress Mission Authoring Tool
 // @author       @Chyld314
 // @match        https://mission-author-dot-betaspike.appspot.com/
@@ -24,8 +24,9 @@ $(function() {
     newCssRules += ".navbar-my-missions							{cursor: pointer;}";
     newCssRules += ".list > .bordered-panel {padding: 15px;}";
     newCssRules += ".list .missions-list,.missions-list .panel-body .row 				{display: flex;flex-wrap: wrap;}";
-    newCssRules += ".list .create-mission-button    {margin: 0 5px;float: none!important;display: inline-block;}"
-    newCssRules += ".missions-list {opacity: 0; transition: opacity 0.5s} .missions-list.ready {opacity:1}";
+    newCssRules += ".list .create-mission-button    {margin: 0 5px;float: none!important;display: inline-block;}";
+    newCssRules += ".missions-list, .name-view .bordered-panel, .type-view .bordered-panel {opacity: 0; transition: opacity 0.5s}";
+    newCssRules += ".missions-list.ready, .name-view .bordered-panel.ready, .type-view .bordered-panel.ready {opacity:1}";
     newCssRules += ".missions-list .mission 					{border-width: 2px;  background-color: #050505; margin: 10px 0 0; position: relative; padding: 5px; display: block;}";
     newCssRules += ".list .mission .action-button 				{width: 100%; min-width: initial; max-width: initial;}";
     newCssRules += ".mission-header-container					{display: flex; align-items: stretch;}";
@@ -201,7 +202,7 @@ function init() {
 
         if (editStep == editScope.EditorScreenViews.TYPE) {
             //Overhauled UI on Mission Type page, including more editorialising on non-linear missions in banners
-            $(".type-view .bordered-panel").empty();
+            $(".type-view .bordered-panel").empty().addClass('ready');
             var editCode = "<div class='btn-group btn-group-justified'>";
 
             editCode += "<div class='btn-group'><button class='btn btn-lg' ng-click='mission.definition._sequential = true; mission.definition._hidden = false' ng-class='{active: mission.definition._sequential && !mission.definition._hidden}'><i class='glyphicon glyphicon-arrow-right'></i>&nbsp;&nbsp;SEQUENTIAL</button></div>";
@@ -217,7 +218,7 @@ function init() {
             $(".type-view .bordered-panel").append(compiledContent);
         } else if (editStep == editScope.EditorScreenViews.NAME){
           //Overhauled UI on Mission Name/Image pages
-          $(".name-view .bordered-panel").empty();
+          $(".name-view .bordered-panel").empty().addClass('ready');
           var editCode = "<div class='row'><div class='col-sm-8 form-horizontal'><div class='form-group'>";
           editCode += "<label for='missionName' class='col-sm-2 control-label'>Mission Name</label>";
           editCode += "<div class='col-sm-10'><input type='text' id='missionName' ng-model='mission.definition.name' class='form-control' placeholder='Add mission name' ng-class='{\"invalid\": !mission.definition.name}' maxlength='" + editScope.MissionRules.MAX_MISSION_NAME_LENGTH + "'>";

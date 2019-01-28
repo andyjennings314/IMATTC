@@ -13,8 +13,10 @@ A Greasemonkey-powered total overhaul for the Ingress Mission Authoring Tool
 - Drag-and-drop waypoint reordering in Waypoint view
 - Drag-and-drop functionality for custom categories
 - Extra options for filtering/searching missions
+- Banner preview functionality
 
 ## Release History
+- 0.4.3: Fixed transition while loading in reworked pages. Mission backgrounds now dark grey, former background colours moved to mission borders. Assorted CSS fixes.
 - 0.4.2: Implemented custom category feature - user can create custom categories, and add missions to them.
 - 0.3.5: Mission actions check appropriate actions exist. Overhaul on Mission Type and Mission Name pages for better layout.
 - 0.3.4: Preparation for beta testing. Page changes now check variable for page load to confirm page transition. Adding better breadcrumb to Edit Mission pages. Added warning about Any Order missions when selected as Mission Type. Better handing for mission images. CSS fixes.
