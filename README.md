@@ -6,16 +6,17 @@ A Greasemonkey-powered total overhaul for the Ingress Mission Authoring Tool
   - Better use of screen space
   - More distinct colouration and iconography for mission status
   - Consistent mission ordering (missions are always sorted by mission name)
-- User-created categories for missions.
+  - Intel link to published missions
+- User-created categories for missions, including "preview as banner" functionality.
 - Minor UI enhancements to mission creation/editing
 
 ## Upcoming features
 - Drag-and-drop waypoint reordering in Waypoint view
 - Drag-and-drop functionality for custom categories
 - Extra options for filtering/searching missions
-- Banner preview functionality
 
 ## Release History
+- 0.4.4: "Preview as banner" button for categories. Missions that are live contain a link to the mission in the Intel map.
 - 0.4.3: Fixed transition while loading in reworked pages. Mission backgrounds now dark grey, former background colours moved to mission borders. Assorted CSS fixes.
 - 0.4.2: Implemented custom category feature - user can create custom categories, and add missions to them.
 - 0.3.5: Mission actions check appropriate actions exist. Overhaul on Mission Type and Mission Name pages for better layout.

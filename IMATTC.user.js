@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         IMATTC
-// @version      0.4.3
+// @version      0.4.4
 // @description  A usability overhaul for the Ingress Mission Authoring Tool
 // @author       @Chyld314
 // @match        https://mission-author-dot-betaspike.appspot.com/
@@ -44,6 +44,10 @@ $(function() {
     newCssRules += ".missions-list .panel-heading a:after {  font-family: 'Glyphicons Halflings';  content: '\\e114';  float: right;  color: 5afbea;  position: relative;  left: 10px; }";
     newCssRules += ".missions-list .panel-heading h4.collapsed a:after {content: '\\e080'; }";
     newCssRules += ".modal {color: black;}";
+    newCssRules += ".banner-preview .modal-body {background-color: #222;}";
+    newCssRules += ".banner-preview .row {display: flex; flex-direction: row-reverse; flex-wrap:wrap-reverse!important}";
+    newCssRules += ".banner-preview img {border-radius: 50%;border: 3px solid goldenrod;}";
+    newCssRules += ".banner-preview .col-xs-2 {padding-bottom: 15px;}";
 
     newCssRules += ".mission-list-item-published 				{background-image: none; border-color: darkgreen;color: lightgreen;}";
     newCssRules += ".list .mission .mission-title-published 	{color: lightgreen;}";
@@ -408,20 +412,25 @@ function init() {
                 missionContent += "<h4 class='panel-title' ng-class='{\"collapsed\" : !categoryCollapse["+i+"]}'><a ng-click='categoryCollapse["+i+"] = !categoryCollapse["+i+"]' role='button' data-toggle='collapse'>";
                 missionContent += categoryNames[i];
                 missionContent += "</a></h4></div><div class='panel-collapse collapse' ng-class='{\"in\" : categoryCollapse["+i+"]}' role='tabpanel'><div class='panel-body'>";
-                missionContent += "<div class='row'><div class='col-xs-12'><button class='btn btn-default'style='float: right!important;margin: 5px 0;' ng-click='deleteCategory("+i+")'>Delete Category</button></div>";
+                missionContent += "<div class='row'><div class='col-xs-12'><button class='btn btn-default'style='float: right!important;margin: 5px 0;' ng-click='deleteCategory("+i+")'>Delete Category</button>";
                 if (!categoryContent[i] || categoryContent[i].length == 0){
                   //no missions so far!
-                  missionContent += "<div class='col-xs-12'>No missions added to the category yet</div>";
+                  missionContent += "</div><div class='col-xs-12'>No missions added to the category yet</div>";
                 } else {
+                  missionContent += "<button class='btn btn-default'style='float: right!important;margin: 5px;' data-toggle='modal' data-target='#previewBanner"+i+"'>Preview As Banner</button></div>";
+                  var bannerModal = "<div class='modal fade' id='previewBanner"+i+"' tabindex='-1' role='dialog'><div class='modal-dialog modal-lg' role='document'><div class='modal-content banner-preview'><div class='modal-header'><button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button><h4 class='modal-title'>Preview \""+categoryNames[i]+"\"</h4></div><div class='modal-body'><div class='row'>";
                   for (var j = 0; j < categoryContent[i].length; j++){
                     var missionID = categoryContent[i][j];
                     for (var k = 0; k < categoryMissions.length; k++){
                       if (categoryMissions[k] && categoryMissions[k].mission_guid == missionID){
                         missionContent += generateMission(categoryMissions[k], k, i);
+                        bannerModal += "<div class='col-xs-2'><img class='img-responsive' src='"+(categoryMissions[k].definition.logo_url ? categoryMissions[k].definition.logo_url : "/images/button_logo.png")+"' /></div>";
                         categoryMissions[k] = null;
                       }
                     }
                   }
+                  bannerModal += "</div></div></div></div></div>";
+                  missionContent += bannerModal;
                 }
                 missionContent +="</div></div></div></div>";
               }
