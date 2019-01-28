@@ -377,6 +377,10 @@ function init() {
           if (missionScope.getButton2Title(mission))
               newMissionCode += "<li><a role='button' ng-click='button2Clicked(missions[" + id + "])'>" + missionScope.getButton2Title(mission) + "</a></li>";
           newMissionCode += "<li role='separator' class='divider'></li>";
+          //if mission is live, link to mission in Ingress interval
+          if (missionState != "draft" && missionState != "submitted" ){
+            newMissionCode += "<li><a role='button' href='https://intel.ingress.com/mission/"+mission.mission_guid+"' target='_blank'>Open Mission In Intel</a></li>";
+          }
           if (selectedCategory === false){
             //adding unsorted mission to category
             newMissionCode += "<li><a role='button' ng-click='selectACategory(missions[" + id + "])' data-toggle='modal' data-target='#addCateModel'>Add To Category...</a></li>";
@@ -470,7 +474,7 @@ function init() {
         });
         $('.list .bordered-panel').append($('.list div:not(.bordered-panel) button.yellow.create-mission-button'));
 
-        //initiating the missionScope
+        //initiating the missions
         missionScope.missions = w.$filter("orderBy")(missionScope.missions, 'definition.name');
         $(".missions-list").removeClass("row").addClass('ready');
         generateAllMissions();
