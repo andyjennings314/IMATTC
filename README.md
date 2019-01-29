@@ -3,7 +3,7 @@ A Greasemonkey userscript overhaul for the [Ingress Mission Authoring Tool](http
 
 In order to use this, you'll need a browser with a userscript manager, such as Greasemonkey or [Tampermonkey](https://tampermonkey.net/), and an [Ingress](https://ingress.com/) user account eligible to create missions.
 
-##[Download and Install](https://github.com/andyjennings314/IMATTC/raw/master/IMATTC.user.js)
+[Download and Install](https://github.com/andyjennings314/IMATTC/raw/master/IMATTC.user.js)
 
 ## Features
 - Total overhaul of the main mission listing, featuring:
