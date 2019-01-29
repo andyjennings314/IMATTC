@@ -1,5 +1,9 @@
 # IMATTC
-A Greasemonkey-powered total overhaul for the Ingress Mission Authoring Tool
+A Greasemonkey userscript overhaul for the [Ingress Mission Authoring Tool](https://mission-author-dot-betaspike.appspot.com/).
+
+In order to use this, you'll need a browser with a userscript manager, such as Greasemonkey or [Tampermonkey](https://tampermonkey.net/), and an [Ingress](https://ingress.com/) user account eligible to create missions.
+
+[##Download and Install](https://github.com/andyjennings314/IMATTC/raw/master/IMATTC.user.js)
 
 ## Features
 - Total overhaul of the main mission listing, featuring:
