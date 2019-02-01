@@ -114,7 +114,7 @@ $(function() {
 
 function init() {
     //
-    var w = window;
+    const w = typeof unsafeWindow === 'undefined' ? window : unsafeWindow;
     let tryNumber = 15;
 
     const initWatcher = setInterval(() => {
