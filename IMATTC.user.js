@@ -12,8 +12,13 @@
 $(function() {
     'use strict';
     //Latest version of Bootstrap, and correct version of jQuery
+    if (!$){
+      var insertJq=document.createElement('script');
+      insertJq.setAttribute("type","text/javascript");
+      insertJq.setAttribute("src", "https://code.jquery.com/jquery-1.12.4.min.js");
+      document.getElementsByTagName("head")[0].appendChild(insertJq);
+    }
     $("link[href='vendor/bootstrap/css/bootstrap.css']").attr("href", "https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
-    $("link[href='vendor/jquery/jquery-1.10.2.js']").remove();
 
     // Modify time conversion variables to ones with actual granularity
     TimeConversionConstants.MINUTE_GRANULARITY_MINUTES = 1;
