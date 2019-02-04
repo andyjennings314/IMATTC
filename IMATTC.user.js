@@ -11,8 +11,9 @@
 // ==/UserScript==
 $(function() {
     'use strict';
-    //Latest version of Bootstrap
-    $("link[href='vendor/bootstrap/css/bootstrap.css']").attr("href", "https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css")
+    //Latest version of Bootstrap, and correct version of jQuery
+    $("link[href='vendor/bootstrap/css/bootstrap.css']").attr("href", "https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
+    $("link[href='vendor/jquery/jquery-1.10.2.js']").remove();
 
     // Modify time conversion variables to ones with actual granularity
     TimeConversionConstants.MINUTE_GRANULARITY_MINUTES = 1;
@@ -342,10 +343,10 @@ function init() {
                   newMissionCode += "ok' title='Published mission'";
                   break;
               case "submitted":
-                  newMissionCode += "send' title='Unpublished mission under review'";
+                  newMissionCode += "time' title='Unpublished mission under review'";
                   break;
               case "submitted_and_published":
-                  newMissionCode += "send' title='Published mission, changes under review'";
+                  newMissionCode += "time' title='Published mission, changes under review'";
                   break;
           }
           newMissionCode += "></i>";
