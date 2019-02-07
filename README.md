@@ -22,6 +22,7 @@ In order to use this, you'll need a browser with a userscript manager, such as [
 - Extra options for filtering/searching missions
 
 ## Release History
+- 1.0.0: Some CSS changes, attempt to solve issues with Greasemonkey.
 - 0.4.4: "Preview as banner" button for categories. Missions that are live contain a link to the mission in the Intel map.
 - 0.4.3: Fixed transition while loading in reworked pages. Mission backgrounds now dark grey, former background colours moved to mission borders. Assorted CSS fixes.
 - 0.4.2: Implemented custom category feature - user can create custom categories, and add missions to them.
