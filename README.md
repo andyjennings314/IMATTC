@@ -7,6 +7,32 @@ In order to use this, you'll need a browser with a userscript manager, such as [
 
 **IMATTC is not currently supported in Greasemonkey.** It is suggested you use this Tampermonkey for now. If you have experience working with scripts in Greasemonkey, [I would not be averse to some help fixing this](https://github.com/andyjennings314/IMATTC/issues/9).
 
+## Getting Started
+
+When you first load the mission editor with IMATTC installed, you'll find all your missions, sorted alphabetically.
+
+![alt text][https://github.com/andyjennings314/IMATTC/raw/master/img/screen1.PNG "Screenshot 1"]
+
+You can easily make use of the mission editor like this (just use the "Perform Mission Actions" button to pull them up), but you may want to use the categories to sort your missions into banners, or other groupings. First, hit the "Create New Category" button, and choose a name:
+
+![alt text][https://github.com/andyjennings314/IMATTC/raw/master/img/screen2.PNG "Screenshot 2"]
+
+The script will create your new category, and automatically drop all your other missions into "Unsorted Missions". The next step is to add missions to your categories, and this can be found under the "Perform Mission Actions" button:
+
+![alt text][https://github.com/andyjennings314/IMATTC/raw/master/img/screen3.PNG "Screenshot 3"]
+
+Next, select the category you want:
+
+![alt text][https://github.com/andyjennings314/IMATTC/raw/master/img/screen4.PNG "Screenshot 4"]
+
+And the mission will appear in the category. Now repeat this in sequential order for each mission you want in the category:
+
+![alt text][https://github.com/andyjennings314/IMATTC/raw/master/img/screen5.PNG "Screenshot 5"]
+
+Lastly, there's even a button at the top of each category, to preview its contents as a banner:
+
+![alt text][https://github.com/andyjennings314/IMATTC/raw/master/img/screen6.PNG "Screenshot 6"]
+
 ## Features
 - Total overhaul of the main mission listing, featuring:
   - Better use of screen space
