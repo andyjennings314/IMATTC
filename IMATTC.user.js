@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         IMATTC
-// @version      1.0.0
+// @version      1.0.1
 // @description  A usability overhaul for the Ingress Mission Authoring Tool
 // @author       @Chyld314
 // @match        https://mission-author-dot-betaspike.appspot.com/
@@ -109,7 +109,7 @@ $(function() {
     newCssRules += ".pagination>.active>a, .pagination>.active>a:hover {background-color: #5afbea;border-color: #5afbea;color: #0b0c0d;}";
     newCssRules += ".type-view .btn.focus, .type-view .btn:focus, .type-view .btn:hover {color: unset;}";
     newCssRules += ".type-view .btn.active.focus, .type-view .btn.active:focus, .type-view .btn.active:hover {color: #ebbc4a;}";
-    newCssRules += ".bordered-panel p           {font-size: 20px;}";
+    newCssRules += ".type-view .bordered-panel p           {font-size: 20px;}";
     newCssRules += ".stopthat 									{color: red; font-weight: bold;}";
     newCssRules += "input.form-control, textarea.form-control {border: 1px solid #5afbea; background: none; border-radius: 0; color: white;}";
     newCssRules += ".upload-logo .input-row .upload-label {display: block;padding: 0 0 10px;}";
@@ -481,15 +481,23 @@ function init() {
         //compiling the buttons
         w.$injector.invoke(function($compile) {
             var buttonContent = "<div class='bordered-panel'>";
+            //button for adding categories
             buttonContent += "<button ng-click='createCategory()' class='yellow create-mission-button'>Create New Category</button>";
             //buttonContent += "<button ng-click='nukeCategories()' class='yellow create-mission-button'>NUKE EVERYTHING</button>";
-            buttonContent += "</div>";
+            //tally up available missions, and missions in draft states
+            var usedMissions = w.$filter('filter')(missionScope.missions, {state: "!DRAFT"}, true).length;
+            var draftMissions = w.$filter('filter')(missionScope.missions, {state: "DRAFT"}, true).length;
+            buttonContent += "<p style='display:inline;'>" + usedMissions + "/150 missions used";
+            if (draftMissions > 0){
+              buttonContent += " (plus "+draftMissions+" unpublished drafts)";
+            }
+            buttonContent += "</p></div>";
             // Pass our fragment content to $compile, and call the function that $compile returns with the scope.
             var compiledContent = $compile(buttonContent)(missionScope);
             // Put the output of the compilation in to the page using jQuery
             $('.list').prepend(compiledContent);
         });
-        $('.list .bordered-panel').append($('.list div:not(.bordered-panel) button.yellow.create-mission-button'));
+        $('.list .bordered-panel').prepend($('.list div:not(.bordered-panel) button.yellow.create-mission-button'));
 
         //initiating the missions
         missionScope.missions = w.$filter("orderBy")(missionScope.missions, 'definition.name');
