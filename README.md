@@ -48,6 +48,7 @@ Lastly, there's even a button at the top of each category, to preview its conten
 - Extra options for filtering/searching missions
 
 ## Release History
+- 1.1.0: Refactored how categories are stored on the client side, to prepare for sorting and drag/drop
 - 1.0.0: Some CSS changes, attempt to solve issues with Greasemonkey.
 - 0.4.4: "Preview as banner" button for categories. Missions that are live contain a link to the mission in the Intel map.
 - 0.4.3: Fixed transition while loading in reworked pages. Mission backgrounds now dark grey, former background colours moved to mission borders. Assorted CSS fixes.
