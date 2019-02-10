@@ -27,7 +27,7 @@ Next, select the category you want:
 
 And the mission will appear in the category. Now repeat this in sequential order for each mission you want in the category:
 
-![alt text][(https://github.com/andyjennings314/IMATTC/raw/master/img/screen5.PNG "Screenshot 5")
+![alt text](https://github.com/andyjennings314/IMATTC/raw/master/img/screen5.PNG "Screenshot 5")
 
 Lastly, there's even a button at the top of each category, to preview its contents as a banner:
 
