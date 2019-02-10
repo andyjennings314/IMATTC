@@ -37,7 +37,7 @@ Lastly, there's even a button at the top of each category, to preview its conten
 - Total overhaul of the main mission listing, featuring:
   - Better use of screen space
   - More distinct colouration and iconography for mission status
-  - Consistent mission ordering (missions are always sorted by mission name)
+  - Consistent mission sorting criteria
   - Intel link to published missions
 - User-created categories for missions, including "preview as banner" functionality.
 - Minor UI enhancements to mission creation/editing
@@ -45,9 +45,11 @@ Lastly, there's even a button at the top of each category, to preview its conten
 ## Upcoming features
 - Drag-and-drop waypoint reordering in Waypoint view
 - Drag-and-drop functionality for custom categories
-- Extra options for filtering/searching missions
+- Additional mission sort criteria
+- Searching missions
 
 ## Release History
+- 1.2.0: Added sorting criteria for categories, uncategorised, and all-when-there's-no-categories
 - 1.1.0: Refactored how categories are stored on the client side, to prepare for sorting and drag/drop
 - 1.0.0: Some CSS changes, attempt to solve issues with Greasemonkey.
 - 0.4.4: "Preview as banner" button for categories. Missions that are live contain a link to the mission in the Intel map.

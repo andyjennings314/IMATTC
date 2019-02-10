@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         IMATTC
-// @version      1.1.0
+// @version      1.2.0
 // @description  A usability overhaul for the Ingress Mission Authoring Tool
 // @author       @Chyld314
 // @match        https://mission-author-dot-betaspike.appspot.com/
@@ -378,6 +378,45 @@ function init() {
     }
   }
 
+  missionScope.sortCategory = function(category, criteria){
+    if (category == 'all'){
+      missionScope.missions = w.$filter("orderBy")(missionScope.missions, missionScope.sortCriteria[0]);
+    } else if (category == 'unsorted'){
+      missionScope.uncategorisedMissions = w.$filter("orderBy")(missionScope.uncategorisedMissions, missionScope.sortCriteria[categoriesLength]);
+    } else {
+      missionScope.categoryContent[category] = w.$filter("orderBy")(missionScope.categoryContent[category], missionScope.sortCriteria[category]);
+    }
+    generateAllMissions();
+  }
+
+  var generateSort = function (category){
+    var criteria = [
+      {name: "Alphabetical (ascending)", value: "definition.name"},
+      {name: "Alphabetical (descending)", value: "-definition.name"},
+      {name: "Creation order", value: "created_ms"},
+      {name: "Mission state", value: "missionListState"}
+    ];
+    missionScope.sortCriteria.push("");
+    var sortContent = "<select style='width: 50%; display: inline-block; margin: 5px 0;' class='form-control' ng-model='sortCriteria[";
+      switch(category){
+        case "all":
+          sortContent += "0";
+          break;
+        case "unsorted":
+          sortContent += categoriesLength;
+          break;
+        default:
+          sortContent += category;
+          break;
+      }
+    sortContent += "]' ng-change='sortCategory("+(Number.isInteger(category)? category : "\""+category+"\"")+")' >";
+    sortContent += "<option value=''>Sort"+(Number.isInteger(category)? " category" : "" )+" by...</option>";
+    for (var i = 0; i < criteria.length; i++) {
+      sortContent += "<option value='" + criteria[i].value + "'>" + criteria[i].name + "</option>";
+    }
+    sortContent += "</select>";
+    return sortContent;
+  }
   var generateMission = function(mission, id, selectedCategory) {
     var missionState = mission.missionListState.toLowerCase();
     var newMissionCode = "<div class='col-sm-6 col-md-3'><div class='mission mission-list-item-" + missionState + "'>";
@@ -457,18 +496,20 @@ function init() {
     if (categoriesLength == 0) {
       $(".missions-list").addClass("row");
     }
+    missionScope.sortCriteria = [];
     w.$injector.invoke(function($compile) {
       var missionContent = "";
       if (categoriesLength > 0) {
         //if there are user-defined categories, loop over them
-        let categoryMissions = angular.copy(missionScope.missions);
         missionContent += "<div class='panel-group' id='accordion' role='tablist' aria-multiselectable='true' style='width: 100%'>";
         for (var i = 0; i < categoriesLength; i++) {
           missionContent += "<div class='panel panel-default'><div class='panel-heading' role='tab'>";
           missionContent += "<h4 class='panel-title' ng-class='{\"collapsed\" : !categoryCollapse[" + i + "]}'><a ng-click='categoryCollapse[" + i + "] = !categoryCollapse[" + i + "]' role='button' data-toggle='collapse'>";
           missionContent += categoryNames[i];
           missionContent += "</a></h4></div><div class='panel-collapse collapse' ng-class='{\"in\" : categoryCollapse[" + i + "]}' role='tabpanel'><div class='panel-body'>";
-          missionContent += "<div class='row'><div class='col-xs-12'><button class='btn btn-default'style='float: right!important;margin: 5px 0;' ng-click='deleteCategory(" + i + ")'>Delete Category</button>";
+          missionContent += "<div class='row'><div class='col-xs-12'>";
+          missionContent += generateSort(i);
+          missionContent += "<button class='btn btn-default'style='float: right!important;margin: 5px 0;' ng-click='deleteCategory(" + i + ")'>Delete Category</button>";
           if (!missionScope.categoryContent[i] || missionScope.categoryContent[i].length == 0) {
             //no missions so far!
             missionContent += "</div><div class='col-xs-12'>No missions added to the category yet</div>";
@@ -488,15 +529,18 @@ function init() {
         //add unsorted missions if there are any
         missionContent += "<div class='panel panel-default'><div class='panel-heading' role='tab' id='header-unsorted'>";
         missionContent += "<h4 class='panel-title' ng-class='{\"collapsed\" : !categoryCollapse[" + categoriesLength + "]}'><a ng-click='categoryCollapse[" + categoriesLength + "] = !categoryCollapse[" + categoriesLength + "]' role='button' data-toggle='collapse'>Unsorted Missions</a></h4></div><div class='panel-collapse collapse' ng-class='{\"in\" : categoryCollapse[" + categoriesLength + "]}' role='tabpanel'><div class='panel-body'>";
-        missionContent += "<div class='row'>";
+        missionContent += "<div class='row'><div class='col-xs-12'>";
+        missionContent += generateSort('unsorted');
+        missionContent += "</div>";
         for (var i = 0; i < missionScope.uncategorisedMissions.length; i++) {
           missionContent += generateMission(missionScope.uncategorisedMissions[i], missionScope.uncategorisedMissions[i].position, false);
         }
-        missionContent += "</div></div></div></div>";
-
-        missionContent += "</div>";
+        missionContent += "</div></div></div></div></div>";
       } else {
         //if no user-defined categories, just loop through the missions
+        missionContent += "<div class='col-xs-12'>";
+        missionContent += generateSort('all');
+        missionContent += "</div>";
         for (var i = 0; i < missionScope.missions.length; i++) {
           var mission = missionScope.missions[i];
           missionContent += generateMission(mission, i, false);
@@ -525,12 +569,8 @@ function init() {
     buttonContent += "<button ng-click='createCategory()' class='yellow create-mission-button'>Create New Category</button>";
     //buttonContent += "<button ng-click='nukeCategories()' class='yellow create-mission-button'>NUKE EVERYTHING</button>";
     //tally up available missions, and missions in draft states
-    var usedMissions = w.$filter('filter')(missionScope.missions, {
-      state: "!DRAFT"
-    }, true).length;
-    var draftMissions = w.$filter('filter')(missionScope.missions, {
-      state: "DRAFT"
-    }, true).length;
+    var usedMissions = w.$filter('filter')(missionScope.missions, {state: "!DRAFT"}, true).length;
+    var draftMissions = w.$filter('filter')(missionScope.missions, {state: "DRAFT"}, true).length;
     buttonContent += "<p style='display:inline;'>" + usedMissions + "/150 missions used";
     if (draftMissions > 0) {
       buttonContent += " (plus " + draftMissions + " unpublished drafts)";
