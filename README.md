@@ -38,17 +38,20 @@ Lastly, there's even a button at the top of each category, to preview its conten
   - Better use of screen space
   - More distinct colouration and iconography for mission status
   - Consistent mission sorting criteria
-  - Intel link to published missions
+  - Ability to preview missions, both in mission editor and Ingress Intel map
 - User-created categories for missions, including "preview as banner" functionality.
 - Minor UI enhancements to mission creation/editing
 
 ## Upcoming features
+- Estimating distance of missions on preview pages
+- Previewing routes and distance for all missions in category
 - Drag-and-drop waypoint reordering in Waypoint view
 - Drag-and-drop functionality for custom categories
 - Additional mission sort criteria
 - Searching missions
 
 ## Release History
+- 1.3.0: Added ability to preview missions using mission editor. Laid groundwork for previewing banner routes
 - 1.2.0: Added sorting criteria for categories, uncategorised, and all-when-there's-no-categories
 - 1.1.0: Refactored how categories are stored on the client side, to prepare for sorting and drag/drop
 - 1.0.0: Some CSS changes, attempt to solve issues with Greasemonkey.

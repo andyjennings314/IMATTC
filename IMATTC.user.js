@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         IMATTC
-// @version      1.2.0
+// @version      1.3.0
 // @description  A usability overhaul for the Ingress Mission Authoring Tool
 // @author       @Chyld314
 // @match        https://mission-author-dot-betaspike.appspot.com/
@@ -160,6 +160,9 @@ function init() {
     w.$compile = w.$app.injector().get('$compile');
     w.$location = w.$app.injector().get('$location');
     w.$timeout = w.$app.injector().get('$timeout');
+    w.$q = w.$app.injector().get('$q');
+    w.$http = w.$app.injector().get('$http');
+    w.WireUtil = w.$app.injector().get('WireUtil');
 
     w.$rootScope.$on('$routeChangeStart', function(next, last) {
       setTimeout(() => {
@@ -191,9 +194,18 @@ function init() {
       var editScope = w.$scope($('div.editor'));
       if (editScope) {
         missionEditSetup(editScope);
+      } else {
+        var previewScope = w.$scope($('div.preview-mission'));
+        if (previewScope){
+          missionPreviewSetup(previewScope);
+        }
       }
     }
   }
+
+  function missionPreviewSetup(previewScope) {
+    //$('body').css('margin-top','0');
+  };
 
   function missionEditSetup(editScope) {
     var editStep = editScope.mission.ui.view;
@@ -256,44 +268,86 @@ function init() {
   }
 
   function missionListSetup(missionScope) {
-    missionScope.missions = w.$filter("orderBy")(missionScope.missions, 'definition.name');
-    //unload category data in w.localStorage
-    var categoriesLength = parseInt(w.localStorage.getItem('categoriesLength')) || 0;
-    var categoryNames = w.localStorage.getItem('categoryNames') ? w.localStorage.getItem('categoryNames').split(',') : [];
-    var categoryGUIDs = [];
-    missionScope.categoryCollapse = [];
-    for (var i = 0; i < categoriesLength; i++) {
-      categoryGUIDs.push(w.localStorage.getItem('categoryContent' + i) ? w.localStorage.getItem('categoryContent' + i).split(',') : []);
-      missionScope.categoryCollapse.push(false)
+
+    missionScope.getFullMissionData = function(missions){
+      var dfd = w.$q.defer();
+      var missionPromises = [];
+      angular.forEach(missions, function(mission) {
+        if(mission.missionListState != "DRAFT" && mission.missionListState != "SUBMITTED"){
+          var mId = mission.mission_guid;
+          missionPromises.push($http.post("https://mission-author-dot-betaspike.appspot.com/api/author/getMissionForProfile", {mission_guid: mId}));
+        } else {
+          var mId = mission.draft_mission_id;
+          missionPromises.push($http.post("https://mission-author-dot-betaspike.appspot.com/api/author/getMission", {mission_id: mId}));
+        }
+      });
+      w.$q.all(missionPromises).then(function(results) {
+        var missionData = [];
+        for (var i = 0; i = results.length; i++){
+          if (results[i] !== undefined){
+            var f = WireUtil.convertMissionWireToLocal(results[i].data.mission, results[i].data.pois);
+            missionData.push(f.definition.waypoints);
+          } else {missionData.push(null)}
+        }
+        dfd.resolve(missionData);
+      },
+      function(data, status) {
+        console.error('error: ', status, data);
+      }
+    )
+      return dfd.promise;
     }
-    //and one for unsorted missions
-    missionScope.categoryCollapse.push(true);
-    missionScope.selectedCategoryMissionId = null;
-    //now create the categorised/uncategorised missions
-    if (categoriesLength > 0) {
-      missionScope.categoryContent = [];
-      //create uncategorised mission bucket, that categories will take missions from. Add position in initial array
-      missionScope.uncategorisedMissions = angular.copy(missionScope.missions);
-      for (var i = 0; i < missionScope.uncategorisedMissions.length; i++) {
-        missionScope.uncategorisedMissions[i].position = i;
+
+    missionScope.missions = w.$filter("orderBy")(missionScope.missions, 'definition.name');
+    //missionScope.getFullMissionData(missionScope.missions).then(function(data){
+        //for (var i=0;i<data.length;i++){
+        //  missionScope.missions[i].definition.waypoints = data[i];
+        //}
+
+        //unload category data in w.localStorage
+        var categoriesLength = parseInt(w.localStorage.getItem('categoriesLength')) || 0;
+        var categoryNames = w.localStorage.getItem('categoryNames') ? w.localStorage.getItem('categoryNames').split(',') : [];
+        var categoryGUIDs = [];
+        missionScope.categoryCollapse = [];
+        for (var i = 0; i < categoriesLength; i++) {
+          categoryGUIDs.push(w.localStorage.getItem('categoryContent' + i) ? w.localStorage.getItem('categoryContent' + i).split(',') : []);
+          missionScope.categoryCollapse.push(false)
+        }
+        //and one for unsorted missions
+        missionScope.categoryCollapse.push(true);
+        missionScope.selectedCategoryMissionId = null;
+        //now create the categorised/uncategorised missions
+        if (categoriesLength > 0) {
+          missionScope.categoryContent = [];
+          //create uncategorised mission bucket, that categories will take missions from. Add position in initial array
+          missionScope.uncategorisedMissions = angular.copy(missionScope.missions);
+          for (var i = 0; i < missionScope.uncategorisedMissions.length; i++) {
+            missionScope.uncategorisedMissions[i].position = i;
+          }
+
+        //loop through each category of GUIDs, and add actual missions to scope
+        categoryGUIDs.forEach(function(category) {
+          var catobj = [];
+          category.forEach(function(guid) {
+            for (var i = 0; i < missionScope.uncategorisedMissions.length ; i++) {
+              //once the right mission is found, add position, push it to the holding array and remove from uncategorised
+              if (missionScope.uncategorisedMissions[i].mission_guid == guid) {
+                catobj.push(missionScope.uncategorisedMissions[i]);
+                missionScope.uncategorisedMissions.splice(i, 1);
+                break;
+              }
+            }
+          })
+          missionScope.categoryContent.push(catobj)
+        })
       }
 
-    //loop through each category of GUIDs, and add actual missions to scope
-    categoryGUIDs.forEach(function(category) {
-      var catobj = [];
-      category.forEach(function(guid) {
-        for (var i = 0; i < missionScope.uncategorisedMissions.length ; i++) {
-          //once the right mission is found, add position, push it to the holding array and remove from uncategorised
-          if (missionScope.uncategorisedMissions[i].mission_guid == guid) {
-            catobj.push(missionScope.uncategorisedMissions[i]);
-            missionScope.uncategorisedMissions.splice(i, 1);
-            break;
-          }
-        }
-      })
-      missionScope.categoryContent.push(catobj)
-    })
+    //})
+
+  missionScope.previewMission = function(guid) {
+    $('#previewMissionModel .modal-body').empty().append("<iframe style='width: 100%; height: 400px' src='https://mission-author-dot-betaspike.appspot.com/mission/"+guid+"'></iframe>");
   }
+
 
   missionScope.selectACategory = function(mission) {
     missionScope.selectedCategoryMissionId = mission.mission_guid;
@@ -417,6 +471,7 @@ function init() {
     sortContent += "</select>";
     return sortContent;
   }
+
   var generateMission = function(mission, id, selectedCategory) {
     var missionState = mission.missionListState.toLowerCase();
     var newMissionCode = "<div class='col-sm-6 col-md-3'><div class='mission mission-list-item-" + missionState + "'>";
@@ -476,8 +531,9 @@ function init() {
     if (missionScope.getButton2Title(mission))
       newMissionCode += "<li><a role='button' ng-click='button2Clicked(missions[" + id + "])'>" + missionScope.getButton2Title(mission) + "</a></li>";
     newMissionCode += "<li role='separator' class='divider'></li>";
-    //if mission is live, link to mission in Ingress interval
+    //if mission is live, link to mission in Ingress intel and MAT preview thing
     if (missionState != "draft" && missionState != "submitted") {
+      newMissionCode += "<li><a role='button' ng-click='previewMission(\"" + mission.mission_guid + "\")' data-toggle='modal' data-target='#previewMissionModel'>Preview Mission</a></li>";
       newMissionCode += "<li><a role='button' href='https://intel.ingress.com/mission/" + mission.mission_guid + "' target='_blank'>Open Mission In Intel</a></li>";
     }
     if (selectedCategory === false) {
@@ -553,6 +609,11 @@ function init() {
         missionContent += "<option value='" + i + "' data-dismiss='modal'>" + categoryNames[i] + "</option>";
       }
       missionContent += "</select>";
+      missionContent += "</div></div></div></div>";
+
+      //modal for previewing missions
+      missionContent += "<div class='modal fade' id='previewMissionModel' tabindex='-1' role='dialog'><div class='modal-dialog modal-lg' role='document'><div class='modal-content'><div class='modal-header'><button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button><h4 class='modal-title'>Preview Mission</h4></div><div class='modal-body' style='padding: 0;'>";
+      //missionContent += "";
       missionContent += "</div></div></div></div>";
 
       // Pass our fragment content to $compile, and call the function that $compile returns with the scope.
