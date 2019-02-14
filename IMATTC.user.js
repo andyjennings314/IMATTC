@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         IMATTC
-// @version      1.3.3
+// @version      1.3.4
 // @description  A usability overhaul for the Ingress Mission Authoring Tool
 // @author       @Chyld314
 // @match        https://mission-author-dot-betaspike.appspot.com/
@@ -115,8 +115,8 @@ $(function() {
   newCssRules += ".upload-logo .input-row .upload-label {display: block;padding: 0 0 10px;}";
   newCssRules += ".upload-logo .input-row {display: block;}";
   newCssRules += ".upload-logo .input-row .upload-logo-cell, .upload-logo .input-row .clear-logo-button {display: inline-block;padding: 0; max-width: 50%;}";
-  newCssRules += ".preview-mission .mission-header {margin: 0; width: 65%; float: left;)}"
-  newCssRules += ".preview-mission .mission-stats, .preview-mission .mission-description {max-width: 35%;float: right; display: inline-block;}"
+  newCssRules += ".preview-mission .mission-header {margin: 0; width: 65%; float: left;)}";
+  newCssRules += ".preview-mission .mission-stats, .preview-mission .mission-description {max-width: 35%;float: right; display: inline-block;}";
   newCssRules += "</style>";
   $("head").append(newCssRules);
 
@@ -346,6 +346,29 @@ function init() {
 
     //})
 
+  //function to calculate distances between two sets of coordinates taken from geodatasource.com
+  missionScope.distance = function(lat1, lon1, lat2, lon2, unit) {
+	if ((lat1 == lat2) && (lon1 == lon2)) {
+		return 0;
+	}
+	else {
+		var radlat1 = Math.PI * lat1/180;
+		var radlat2 = Math.PI * lat2/180;
+		var theta = lon1-lon2;
+		var radtheta = Math.PI * theta/180;
+		var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+		if (dist > 1) {
+			dist = 1;
+		}
+		dist = Math.acos(dist);
+		dist = dist * 180/Math.PI;
+		dist = dist * 60 * 1.1515;
+		if (unit=="K") { dist = dist * 1.609344 }
+		if (unit=="N") { dist = dist * 0.8684 }
+		return dist;
+	}
+}
+
   missionScope.previewMission = function(guid) {
     //$('#previewMissionModel .modal-body').empty().append("<iframe style='width: 100%; height: 400px' src='https://mission-author-dot-betaspike.appspot.com/mission/"+guid+"'></iframe>");
     $('#previewMissionModel .modal-body').empty();
@@ -353,12 +376,28 @@ function init() {
     if (mission){
       missionScope.getFullMissionData([mission]).then(function(data){
         mission.definition = data[0];
-        missionScope.mission = mission;
+        //calculate approx. mission length
+        var distance = 0;
+        for (var i = 1; i < mission.definition.waypoints.length; i++){
+          distance += missionScope.distance(
+            mission.definition.waypoints[i-1]._poi.location.latitude,
+            mission.definition.waypoints[i-1]._poi.location.longitude,
+              mission.definition.waypoints[i]._poi.location.latitude,
+              mission.definition.waypoints[i]._poi.location.longitude,
+            "K")
+        }
+
         w.$injector.invoke(function($compile) {
           var modalContent = "<div preview-mission mission='missions["+mission.position+"]' mission-preview-state='\""+MissionPreviewStates.PROFILE+"\"'></div>";
           var compiledContent = $compile(modalContent)(missionScope);
           // Put the output of the compilation in to the page using jQuery
           $('#previewMissionModel .modal-body').append(compiledContent);
+          if (distance < 1){
+            distance = (Math.floor(distance * 100000) / 100) + "m";
+          } else {
+            distance = (Math.floor(distance * 100) / 100) + "km";
+          }
+          setTimeout(function(){$('.mission-stats-row').append('<div class="mission-stats-item"><span class="stats-value">'+distance+'</span></div>');}, 10);
         })
       })
     }
