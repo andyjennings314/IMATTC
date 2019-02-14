@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         IMATTC
-// @version      1.3.2
+// @version      1.3.3
 // @description  A usability overhaul for the Ingress Mission Authoring Tool
 // @author       @Chyld314
 // @match        https://mission-author-dot-betaspike.appspot.com/
@@ -115,7 +115,8 @@ $(function() {
   newCssRules += ".upload-logo .input-row .upload-label {display: block;padding: 0 0 10px;}";
   newCssRules += ".upload-logo .input-row {display: block;}";
   newCssRules += ".upload-logo .input-row .upload-logo-cell, .upload-logo .input-row .clear-logo-button {display: inline-block;padding: 0; max-width: 50%;}";
-  newCssRules += ".preview-mission .mission-header {margin: 0;}"
+  newCssRules += ".preview-mission .mission-header {margin: 0; width: 65%; float: left;)}"
+  newCssRules += ".preview-mission .mission-stats, .preview-mission .mission-description {max-width: 35%;float: right; display: inline-block;}"
   newCssRules += "</style>";
   $("head").append(newCssRules);
 
