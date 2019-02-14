@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         IMATTC
-// @version      1.3.0
+// @version      1.3.1
 // @description  A usability overhaul for the Ingress Mission Authoring Tool
 // @author       @Chyld314
 // @match        https://mission-author-dot-betaspike.appspot.com/
@@ -115,6 +115,7 @@ $(function() {
   newCssRules += ".upload-logo .input-row .upload-label {display: block;padding: 0 0 10px;}";
   newCssRules += ".upload-logo .input-row {display: block;}";
   newCssRules += ".upload-logo .input-row .upload-logo-cell, .upload-logo .input-row .clear-logo-button {display: inline-block;padding: 0; max-width: 50%;}";
+  newCssRules += ".preview-mission .mission-header {margin: 0;}"
   newCssRules += "</style>";
   $("head").append(newCssRules);
 
@@ -283,10 +284,10 @@ function init() {
       });
       w.$q.all(missionPromises).then(function(results) {
         var missionData = [];
-        for (var i = 0; i = results.length; i++){
+        for (var i = 0; i < results.length; i++){
           if (results[i] !== undefined){
             var f = WireUtil.convertMissionWireToLocal(results[i].data.mission, results[i].data.pois);
-            missionData.push(f.definition.waypoints);
+            missionData.push(f.definition);
           } else {missionData.push(null)}
         }
         dfd.resolve(missionData);
@@ -320,10 +321,10 @@ function init() {
         if (categoriesLength > 0) {
           missionScope.categoryContent = [];
           //create uncategorised mission bucket, that categories will take missions from. Add position in initial array
-          missionScope.uncategorisedMissions = angular.copy(missionScope.missions);
-          for (var i = 0; i < missionScope.uncategorisedMissions.length; i++) {
-            missionScope.uncategorisedMissions[i].position = i;
+          for (var i = 0; i < missionScope.missions.length; i++) {
+            missionScope.missions[i].position = i;
           }
+          missionScope.uncategorisedMissions = angular.copy(missionScope.missions);
 
         //loop through each category of GUIDs, and add actual missions to scope
         categoryGUIDs.forEach(function(category) {
@@ -345,9 +346,22 @@ function init() {
     //})
 
   missionScope.previewMission = function(guid) {
-    $('#previewMissionModel .modal-body').empty().append("<iframe style='width: 100%; height: 400px' src='https://mission-author-dot-betaspike.appspot.com/mission/"+guid+"'></iframe>");
+    //$('#previewMissionModel .modal-body').empty().append("<iframe style='width: 100%; height: 400px' src='https://mission-author-dot-betaspike.appspot.com/mission/"+guid+"'></iframe>");
+    $('#previewMissionModel .modal-body').empty();
+    var mission = w.$filter('filter')(missionScope.missions, {mission_guid: guid})[0];
+    if (mission){
+      missionScope.getFullMissionData([mission]).then(function(data){
+        mission.definition = data[0];
+        missionScope.mission = mission;
+        w.$injector.invoke(function($compile) {
+          var modalContent = "<div preview-mission mission='missions["+mission.position+"]' mission-preview-state='\""+MissionPreviewStates.PROFILE+"\"'></div>";
+          var compiledContent = $compile(modalContent)(missionScope);
+          // Put the output of the compilation in to the page using jQuery
+          $('#previewMissionModel .modal-body').append(compiledContent);
+        })
+      })
+    }
   }
-
 
   missionScope.selectACategory = function(mission) {
     missionScope.selectedCategoryMissionId = mission.mission_guid;
@@ -612,7 +626,7 @@ function init() {
       missionContent += "</div></div></div></div>";
 
       //modal for previewing missions
-      missionContent += "<div class='modal fade' id='previewMissionModel' tabindex='-1' role='dialog'><div class='modal-dialog modal-lg' role='document'><div class='modal-content'><div class='modal-header'><button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button><h4 class='modal-title'>Preview Mission</h4></div><div class='modal-body' style='padding: 0;'>";
+      missionContent += "<div class='modal fade' id='previewMissionModel' tabindex='-1' role='dialog'><div class='modal-dialog modal-lg' role='document'><div class='modal-content'><div class='modal-header'><button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button><h4 class='modal-title'>Preview Mission</h4></div><div class='modal-body' style='background:#151515'>";
       //missionContent += "";
       missionContent += "</div></div></div></div>";
 
