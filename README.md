@@ -51,7 +51,7 @@ Lastly, there's even a button at the top of each category, to preview its conten
 - Searching missions
 
 ## Release History
-- 1.3.0: Added ability to preview missions using mission editor. Laid groundwork for previewing banner routes
+- 1.3.0: Added ability to preview missions using mission editor. Laid groundwork for previewing banner routes. Refactored overall mission status counts
 - 1.2.0: Added sorting criteria for categories, uncategorised, and all-when-there's-no-categories
 - 1.1.0: Refactored how categories are stored on the client side, to prepare for sorting and drag/drop
 - 1.0.0: Some CSS changes, attempt to solve issues with Greasemonkey.

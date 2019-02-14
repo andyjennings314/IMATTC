@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         IMATTC
-// @version      1.3.1
+// @version      1.3.2
 // @description  A usability overhaul for the Ingress Mission Authoring Tool
 // @author       @Chyld314
 // @match        https://mission-author-dot-betaspike.appspot.com/
@@ -640,23 +640,44 @@ function init() {
   //compiling the buttons
   w.$injector.invoke(function($compile) {
     var buttonContent = "<div class='bordered-panel'>";
+    //tally up available missions, and missions in draft states
+    var draftMissions = w.$filter('filter')(missionScope.missions, {state: "DRAFT"}, true).length;
+    var dopMissions = w.$filter('filter')(missionScope.missions, {state: "DRAFT_OF_PUBLISHED_MISSION"}, true).length;
+    var submittedMissions = w.$filter('filter')(missionScope.missions, {state: "SUBMITTED"}, true).length;
+    var sapMissions = w.$filter('filter')(missionScope.missions, {state: "SUBMITED_AND_PUBLISHED"}, true).length;
+    var publishedMissions = w.$filter('filter')(missionScope.missions, {state: "PUBLISHED"}, true).length;
+    var remainder = 150 - (draftMissions + dopMissions + submittedMissions + sapMissions + publishedMissions);
+    buttonContent += "<h4 style='margin: 0 0 20px;'>";
+    if (remainder > 0) {
+      buttonContent += "<span class='label'>"+remainder+" missions remaining</span> ";
+    }
+    if (draftMissions > 0) {
+      buttonContent += "<span class='label mission-list-item-draft'>"+draftMissions+" unpublished drafts</span> ";
+    }
+    if (submittedMissions > 0) {
+      buttonContent += "<span class='label mission-list-item-submitted'>"+submittedMissions+" under review</span> ";
+    }
+    if (dopMissions > 0) {
+      buttonContent += "<span class='label mission-list-item-draft_of_published_mission'>"+dopMissions+" being amended</span> ";
+    }
+    if (sapMissions > 0) {
+      buttonContent += "<span class='label mission-list-item-submitted_and_published'>"+sapMissions+" changes under review</span> ";
+    }
+    if (publishedMissions > 0) {
+      buttonContent += "<span class='label mission-list-item-published'>"+publishedMissions+" published</span>";
+    }
+    buttonContent += "</h4>"
     //button for adding categories
     buttonContent += "<button ng-click='createCategory()' class='yellow create-mission-button'>Create New Category</button>";
     //buttonContent += "<button ng-click='nukeCategories()' class='yellow create-mission-button'>NUKE EVERYTHING</button>";
-    //tally up available missions, and missions in draft states
-    var usedMissions = w.$filter('filter')(missionScope.missions, {state: "!DRAFT"}, true).length;
-    var draftMissions = w.$filter('filter')(missionScope.missions, {state: "DRAFT"}, true).length;
-    buttonContent += "<p style='display:inline;'>" + usedMissions + "/150 missions used";
-    if (draftMissions > 0) {
-      buttonContent += " (plus " + draftMissions + " unpublished drafts)";
-    }
-    buttonContent += "</p></div>";
+
+    buttonContent += "</div>";
     // Pass our fragment content to $compile, and call the function that $compile returns with the scope.
     var compiledContent = $compile(buttonContent)(missionScope);
     // Put the output of the compilation in to the page using jQuery
     $('.list').prepend(compiledContent);
   });
-  $('.list .bordered-panel').prepend($('.list div:not(.bordered-panel) button.yellow.create-mission-button'));
+  $('.list .bordered-panel').append($('.list div:not(.bordered-panel) button.yellow.create-mission-button'));
 
   //initiating the missions
   $(".missions-list").removeClass("row").addClass('ready');
