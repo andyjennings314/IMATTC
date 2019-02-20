@@ -452,6 +452,7 @@ function init() {
       categoryNames.push(categoryName);
       w.localStorage.setItem('categoryNames', categoryNames);
       missionScope.categoryContent = missionScope.categoryContent || [];
+      categoryGUIDs.push([]);
       missionScope.categoryContent.push([]);
       w.localStorage.setItem('categoryContent' + (categoriesLength - 1), []);
       generateAllMissions();
