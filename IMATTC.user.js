@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         IMATTC
-// @version      1.3.4
+// @version      1.3.5
 // @description  A usability overhaul for the Ingress Mission Authoring Tool
 // @author       @Chyld314
 // @match        https://mission-author-dot-betaspike.appspot.com/
@@ -451,6 +451,7 @@ function init() {
       w.localStorage.setItem('categoriesLength', categoriesLength);
       categoryNames.push(categoryName);
       w.localStorage.setItem('categoryNames', categoryNames);
+      missionScope.categoryContent = missionScope.categoryContent || [];
       missionScope.categoryContent.push([]);
       w.localStorage.setItem('categoryContent' + (categoriesLength - 1), []);
       generateAllMissions();
@@ -681,11 +682,11 @@ function init() {
   w.$injector.invoke(function($compile) {
     var buttonContent = "<div class='bordered-panel'>";
     //tally up available missions, and missions in draft states
-    var draftMissions = w.$filter('filter')(missionScope.missions, {state: "DRAFT"}, true).length;
-    var dopMissions = w.$filter('filter')(missionScope.missions, {state: "DRAFT_OF_PUBLISHED_MISSION"}, true).length;
-    var submittedMissions = w.$filter('filter')(missionScope.missions, {state: "SUBMITTED"}, true).length;
-    var sapMissions = w.$filter('filter')(missionScope.missions, {state: "SUBMITED_AND_PUBLISHED"}, true).length;
-    var publishedMissions = w.$filter('filter')(missionScope.missions, {state: "PUBLISHED"}, true).length;
+    var draftMissions = w.$filter('filter')(missionScope.missions, {missionListState: "DRAFT"}, true).length;
+    var dopMissions = w.$filter('filter')(missionScope.missions, {missionListState: "DRAFT_OF_PUBLISHED_MISSION"}, true).length;
+    var submittedMissions = w.$filter('filter')(missionScope.missions, {missionListState: "SUBMITTED"}, true).length;
+    var sapMissions = w.$filter('filter')(missionScope.missions, {missionListState: "SUBMITED_AND_PUBLISHED"}, true).length;
+    var publishedMissions = w.$filter('filter')(missionScope.missions, {missionListState: "PUBLISHED"}, true).length;
     var remainder = 150 - (draftMissions + dopMissions + submittedMissions + sapMissions + publishedMissions);
     buttonContent += "<h4 style='margin: 0 0 20px;'>";
     if (remainder > 0) {
