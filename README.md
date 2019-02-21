@@ -37,17 +37,16 @@ Lastly, there's even a button at the top of each category, to preview its conten
 - Total overhaul of the main mission listing, featuring:
   - Better use of screen space
   - More distinct colouration and iconography for mission status
-  - Consistent mission sorting criteria
+  - Consistent mission sorting criteria, including user-defined criteria
   - Ability to preview missions, both in mission editor and Ingress Intel map
-- User-created categories for missions, including "preview as banner" functionality.
+- User-created categories for missions, including image and route preview functionality.
 - Minor UI enhancements to mission creation/editing
 
 ## Upcoming features
-- Estimating distance of missions on preview pages
-- Previewing routes and distance for all missions in category
+- Export to [IngressMosaik](https://ingressmosaik.com) functionality
 - Drag-and-drop waypoint reordering in Waypoint view
 - Drag-and-drop functionality for custom categories
-- Additional mission sort criteria
+- Additional mission sort criteria, including "inital category order" criterion
 - Searching missions
 
 ## Release History
