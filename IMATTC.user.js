@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         IMATTC
-// @version      1.3.5
+// @version      1.4.0
 // @description  A usability overhaul for the Ingress Mission Authoring Tool
 // @author       @Chyld314
 // @match        https://mission-author-dot-betaspike.appspot.com/
@@ -370,7 +370,6 @@ function init() {
 }
 
   missionScope.previewMission = function(guid) {
-    //$('#previewMissionModel .modal-body').empty().append("<iframe style='width: 100%; height: 400px' src='https://mission-author-dot-betaspike.appspot.com/mission/"+guid+"'></iframe>");
     $('#previewMissionModel .modal-body').empty();
     var mission = w.$filter('filter')(missionScope.missions, {mission_guid: guid})[0];
     if (mission){
@@ -402,6 +401,58 @@ function init() {
       })
     }
   }
+
+  missionScope.previewBanner = function(category) {
+    $('#previewMissionModel .modal-body').empty();
+      missionScope.getFullMissionData(missionScope.categoryContent[category]).then(function(data){
+        missionScope.banner = {
+          definition: {
+            name: categoryNames[category],
+            author_nickname: data[0].author_nickname,
+            description: data[0].description,
+            _sequential: data[0]._sequential,
+            logo_url: data[0].logo_url,
+            waypoints: []
+          },
+          stats: {
+            num_completed: missionScope.categoryContent[category][data.length -1].stats.num_completed,
+            rating: 0,
+            median_completion_time: 0
+          },
+        };
+        for (var i = 0; i < missionScope.categoryContent[category].length; i++){
+          missionScope.banner.stats.rating += missionScope.categoryContent[category][i].stats.rating;
+          missionScope.banner.stats.median_completion_time += missionScope.categoryContent[category][i].stats.median_completion_time;
+          data[i].waypoints.forEach(function(wp){
+            missionScope.banner.definition.waypoints.push(wp)
+          })
+        }
+        missionScope.banner.stats.rating = Math.round(missionScope.banner.stats.rating / data.length);
+        //calculate approx. banner length
+        var distance = 0;
+        for (var j = 1; j < missionScope.banner.definition.waypoints.length; j++){
+          distance += missionScope.distance(
+            missionScope.banner.definition.waypoints[j-1]._poi.location.latitude,
+            missionScope.banner.definition.waypoints[j-1]._poi.location.longitude,
+            missionScope.banner.definition.waypoints[j]._poi.location.latitude,
+            missionScope.banner.definition.waypoints[j]._poi.location.longitude,
+            "K")
+          }
+
+        w.$injector.invoke(function($compile) {
+          var modalContent = "<div preview-mission mission='banner' mission-preview-state='\""+MissionPreviewStates.PROFILE+"\"'></div>";
+          var compiledContent = $compile(modalContent)(missionScope);
+          // Put the output of the compilation in to the page using jQuery
+          $('#previewMissionModel .modal-body').append(compiledContent);
+          if (distance < 1){
+            distance = (Math.floor(distance * 100000) / 100) + "m";
+          } else {
+            distance = (Math.floor(distance * 100) / 100) + "km";
+          }
+          setTimeout(function(){$('.mission-stats-row').append('<div class="mission-stats-item"><span class="stats-value">'+distance+'</span></div>');}, 10);
+        })
+      })
+    }
 
   missionScope.selectACategory = function(mission) {
     missionScope.selectedCategoryMissionId = mission.mission_guid;
@@ -626,7 +677,8 @@ function init() {
             //no missions so far!
             missionContent += "</div><div class='col-xs-12'>No missions added to the category yet</div>";
           } else {
-            missionContent += "<button class='btn btn-default'style='float: right!important;margin: 5px;' data-toggle='modal' data-target='#previewBanner" + i + "'>Preview As Banner</button></div>";
+            missionContent += "<button class='btn btn-default'style='float: right!important;margin: 5px;' data-toggle='modal' data-target='#previewBanner" + i + "'>Preview Images</button>";
+            missionContent += "<button class='btn btn-default'style='float: right!important;margin: 5px;' ng-click='previewBanner(" + i + ")' data-toggle='modal' data-target='#previewMissionModel'>Preview Route</button></div>";
             var bannerModal = "<div class='modal fade' id='previewBanner" + i + "' tabindex='-1' role='dialog'><div class='modal-dialog modal-lg' role='document'><div class='modal-content banner-preview'><div class='modal-header'><button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button><h4 class='modal-title'>Preview \"" + categoryNames[i] + "\"</h4></div><div class='modal-body'><div class='row'>";
             for (var j = 0; j < missionScope.categoryContent[i].length; j++) {
               var mission = missionScope.categoryContent[i][j];
