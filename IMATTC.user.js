@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         IMATTC
-// @version      1.4.1
+// @version      1.4.2
 // @description  A usability overhaul for the Ingress Mission Authoring Tool
 // @author       @Chyld314
 // @match        https://mission-author-dot-betaspike.appspot.com/
@@ -117,6 +117,8 @@ $(function() {
   newCssRules += ".upload-logo .input-row .upload-logo-cell, .upload-logo .input-row .clear-logo-button {display: inline-block;padding: 0; max-width: 50%;}";
   newCssRules += ".preview-mission .mission-header {margin: 0; width: 65%; float: left;)}";
   newCssRules += ".preview-mission .mission-stats, .preview-mission .mission-description {max-width: 35%;float: right; display: inline-block;}";
+  newCssRules += "#previewMissionModel .loading-screen { top: 0; right: 0; position: relative; height: 40px;}";
+  newCssRules += "#previewMissionModel .loading.spin { position: fixed; left: 50%; top: 80px; }";
   newCssRules += "</style>";
   $("head").append(newCssRules);
 
@@ -301,6 +303,7 @@ function init() {
     }
 
     missionScope.missions = w.$filter("orderBy")(missionScope.missions, 'definition.name');
+    missionScope.loadingPreview = false;
     //missionScope.getFullMissionData(missionScope.missions).then(function(data){
         //for (var i=0;i<data.length;i++){
         //  missionScope.missions[i].definition.waypoints = data[i];
@@ -370,7 +373,8 @@ function init() {
 }
 
   missionScope.previewMission = function(guid) {
-    $('#previewMissionModel .modal-body').empty();
+    $('#previewMissionModel .modal-body .notloading').empty();
+    missionScope.loadingPreview = true;
     var mission = w.$filter('filter')(missionScope.missions, {mission_guid: guid})[0];
     if (mission){
       missionScope.getFullMissionData([mission]).then(function(data){
@@ -386,11 +390,12 @@ function init() {
             "K")
         }
 
+        missionScope.loadingPreview = false;
         w.$injector.invoke(function($compile) {
           var modalContent = "<div preview-mission mission='missions["+mission.position+"]' mission-preview-state='\""+MissionPreviewStates.PROFILE+"\"'></div>";
           var compiledContent = $compile(modalContent)(missionScope);
           // Put the output of the compilation in to the page using jQuery
-          $('#previewMissionModel .modal-body').append(compiledContent);
+          $('#previewMissionModel .modal-body .notloading').append(compiledContent);
           if (distance < 1){
             distance = (Math.floor(distance * 100000) / 100) + "m";
           } else {
@@ -403,7 +408,8 @@ function init() {
   }
 
   missionScope.previewBanner = function(category) {
-    $('#previewMissionModel .modal-body').empty();
+    $('#previewMissionModel .modal-body .notloading').empty();
+    missionScope.loadingPreview = true;
       missionScope.getFullMissionData(missionScope.categoryContent[category]).then(function(data){
         missionScope.banner = {
           definition: {
@@ -439,11 +445,12 @@ function init() {
             "K")
           }
 
+        missionScope.loadingPreview = false;
         w.$injector.invoke(function($compile) {
           var modalContent = "<div preview-mission mission='banner' mission-preview-state='\""+MissionPreviewStates.PROFILE+"\"'></div>";
           var compiledContent = $compile(modalContent)(missionScope);
           // Put the output of the compilation in to the page using jQuery
-          $('#previewMissionModel .modal-body').append(compiledContent);
+          $('#previewMissionModel .modal-body .notloading').append(compiledContent);
           if (distance < 1){
             distance = (Math.floor(distance * 100000) / 100) + "m";
           } else {
@@ -721,7 +728,7 @@ function init() {
 
       //modal for previewing missions
       missionContent += "<div class='modal fade' id='previewMissionModel' tabindex='-1' role='dialog'><div class='modal-dialog modal-lg' role='document'><div class='modal-content'><div class='modal-header'><button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button><h4 class='modal-title'>Preview Mission</h4></div><div class='modal-body' style='background:#151515'>";
-      //missionContent += "";
+      missionContent += "<div class='loading-screen' ng-show='loadingPreview'><div class='loading spin'></div></div><div class='notloading'></div>";
       missionContent += "</div></div></div></div>";
 
       // Pass our fragment content to $compile, and call the function that $compile returns with the scope.
