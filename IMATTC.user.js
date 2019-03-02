@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         IMATTC
-// @version      1.4.0
+// @version      1.4.1
 // @description  A usability overhaul for the Ingress Mission Authoring Tool
 // @author       @Chyld314
 // @match        https://mission-author-dot-betaspike.appspot.com/
@@ -740,7 +740,7 @@ function init() {
     var submittedMissions = w.$filter('filter')(missionScope.missions, {missionListState: "SUBMITTED"}, true).length;
     var sapMissions = w.$filter('filter')(missionScope.missions, {missionListState: "SUBMITED_AND_PUBLISHED"}, true).length;
     var publishedMissions = w.$filter('filter')(missionScope.missions, {missionListState: "PUBLISHED"}, true).length;
-    var remainder = 150 - (draftMissions + dopMissions + submittedMissions + sapMissions + publishedMissions);
+    var remainder = 150 - (dopMissions + submittedMissions + sapMissions + publishedMissions);
     buttonContent += "<h4 style='margin: 0 0 20px;'>";
     if (remainder > 0) {
       buttonContent += "<span class='label'>"+remainder+" missions remaining</span> ";
