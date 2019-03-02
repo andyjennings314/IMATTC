@@ -415,14 +415,14 @@ function init() {
             waypoints: []
           },
           stats: {
-            num_completed: missionScope.categoryContent[category][data.length -1].stats.num_completed,
+            num_completed: missionScope.categoryContent[category][data.length -1].stats ? missionScope.categoryContent[category][data.length -1].stats.num_completed : 0,
             rating: 0,
             median_completion_time: 0
           },
         };
         for (var i = 0; i < missionScope.categoryContent[category].length; i++){
-          missionScope.banner.stats.rating += missionScope.categoryContent[category][i].stats.rating;
-          missionScope.banner.stats.median_completion_time += missionScope.categoryContent[category][i].stats.median_completion_time;
+          missionScope.banner.stats.rating += missionScope.categoryContent[category][i].stats ? missionScope.categoryContent[category][i].stats.rating : 0;
+          missionScope.banner.stats.median_completion_time += missionScope.categoryContent[category][i].stats ? missionScope.categoryContent[category][i].stats.median_completion_time : 0;
           data[i].waypoints.forEach(function(wp){
             missionScope.banner.definition.waypoints.push(wp)
           })
