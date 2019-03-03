@@ -745,7 +745,7 @@ function init() {
     var draftMissions = w.$filter('filter')(missionScope.missions, {missionListState: "DRAFT"}, true).length;
     var dopMissions = w.$filter('filter')(missionScope.missions, {missionListState: "DRAFT_OF_PUBLISHED_MISSION"}, true).length;
     var submittedMissions = w.$filter('filter')(missionScope.missions, {missionListState: "SUBMITTED"}, true).length;
-    var sapMissions = w.$filter('filter')(missionScope.missions, {missionListState: "SUBMITED_AND_PUBLISHED"}, true).length;
+    var sapMissions = w.$filter('filter')(missionScope.missions, {missionListState: "SUBMITTED_AND_PUBLISHED"}, true).length;
     var publishedMissions = w.$filter('filter')(missionScope.missions, {missionListState: "PUBLISHED"}, true).length;
     var remainder = 150 - (dopMissions + submittedMissions + sapMissions + publishedMissions);
     buttonContent += "<h4 style='margin: 0 0 20px;'>";
