@@ -303,6 +303,9 @@ function init() {
     }
 
     missionScope.categoryContent = [];
+    missionScope.categorisedMissions = [];
+    missionScope.uncategorisedMissions = [];
+    missionScope.uncategorisedSort = 'initial';
     missionScope.missions = w.$filter("orderBy")(missionScope.missions, 'definition.name');
     missionScope.loadingPreview = false;
     missionScope.unsortedCollapse = w.localStorage.getItem('unsortedCollapse') || true;
@@ -318,7 +321,8 @@ function init() {
           id: i,
           name: categoryNames[i],
           missions: w.localStorage.getItem('categoryContent' + i) ? w.localStorage.getItem('categoryContent' + i).split(',') : [],
-          collapse: true
+          collapse: true,
+          sortCriteria: 'initial'
         };
         missionScope.categoryContent.push(thisCategory);
         w.localStorage.removeItem('categoryContent' + i);
@@ -334,31 +338,10 @@ function init() {
     missionScope.categoryContent = JSON.parse(w.localStorage.getItem('allCategories')) || [];
     missionScope.selectedCategoryMissionId = null;
 
-    //now create the categorised/uncategorised missions
-    if (missionScope.categoryContent.length > 0) {
-      missionScope.categoryContent = [];
-      //create uncategorised mission bucket, that categories will take missions from. Add position in initial array
-      for (var i = 0; i < missionScope.missions.length; i++) {
-        missionScope.missions[i].position = i;
-      }
-      missionScope.uncategorisedMissions = angular.copy(missionScope.missions);
-
-    //loop through each category of GUIDs, and add actual missions to scope
-    missionScope.categoryContent.forEach(function(category) {
-      var catobj = [];
-      category.forEach(function(guid) {
-        for (var i = 0; i < missionScope.uncategorisedMissions.length ; i++) {
-          //once the right mission is found, add position, push it to the holding array and remove from uncategorised
-          if (missionScope.uncategorisedMissions[i].mission_guid == guid) {
-            catobj.push(missionScope.uncategorisedMissions[i]);
-            missionScope.uncategorisedMissions.splice(i, 1);
-            break;
-          }
-        }
-      })
-      missionScope.categoryContent.push(catobj)
-    })
-  }
+    //Add position in initial array
+    for (var i = 0; i < missionScope.missions.length; i++) {
+      missionScope.missions[i].position = i;
+    }
 
   //function to calculate distances between two sets of coordinates taken from geodatasource.com
   missionScope.distance = function(lat1, lon1, lat2, lon2, unit) {
@@ -421,10 +404,10 @@ function init() {
   missionScope.previewBanner = function(category) {
     $('#previewMissionModel .modal-body .notloading').empty();
     missionScope.loadingPreview = true;
-      missionScope.getFullMissionData(missionScope.categoryContent[category]).then(function(data){
+      missionScope.getFullMissionData(missionScope.categorisedMissions[category]).then(function(data){
         missionScope.banner = {
           definition: {
-            name: categoryNames[category],
+            name: missionScope.categoryContent[category].name,
             author_nickname: data[0].author_nickname,
             description: data[0].description,
             _sequential: data[0]._sequential,
@@ -432,14 +415,14 @@ function init() {
             waypoints: []
           },
           stats: {
-            num_completed: missionScope.categoryContent[category][data.length -1].stats ? missionScope.categoryContent[category][data.length -1].stats.num_completed : 0,
+            num_completed: missionScope.categorisedMissions[category][data.length -1].stats ? missionScope.categorisedMissions[category][data.length -1].stats.num_completed : 0,
             rating: 0,
             median_completion_time: 0
           },
         };
-        for (var i = 0; i < missionScope.categoryContent[category].length; i++){
-          missionScope.banner.stats.rating += missionScope.categoryContent[category][i].stats ? missionScope.categoryContent[category][i].stats.rating : 0;
-          missionScope.banner.stats.median_completion_time += missionScope.categoryContent[category][i].stats ? missionScope.categoryContent[category][i].stats.median_completion_time : 0;
+        for (var i = 0; i < missionScope.categorisedMissions[category].length; i++){
+          missionScope.banner.stats.rating += missionScope.categorisedMissions[category][i].stats ? missionScope.categorisedMissions[category][i].stats.rating : 0;
+          missionScope.banner.stats.median_completion_time += missionScope.categorisedMissions[category][i].stats ? missionScope.categorisedMissions[category][i].stats.median_completion_time : 0;
           data[i].waypoints.forEach(function(wp){
             missionScope.banner.definition.waypoints.push(wp)
           })
@@ -483,14 +466,6 @@ function init() {
     var categoryID = missionScope.selectedCategoryID;
     missionScope.categoryContent[categoryID].missions.push(missionScope.selectedCategoryMissionId);
     missionScope.categoryContent[categoryID].collapse = false;
-    //find mission in uncategorised missions
-    for (var i = 0; i < missionScope.uncategorisedMissions.length; i++) {
-      if (missionScope.uncategorisedMissions[i].mission_guid == missionScope.selectedCategoryMissionId) {
-        missionScope.categoryContent[categoryID].push(missionScope.uncategorisedMissions[i]);
-        missionScope.uncategorisedMissions.splice(i, 1);
-        break;
-      }
-    }
     missionScope.selectedCategoryMissionId = null;
     missionScope.selectedCategoryID = null;
     w.localStorage.setItem('allCategories', JSON.stringify(missionScope.categoryContent));
@@ -500,12 +475,9 @@ function init() {
   missionScope.removeFromCategory = function(category, mission) {
     for (var i = 0; i < missionScope.categoryContent[category].missions.length; i++) {
       if (missionScope.categoryContent[category].missions[i] == mission.mission_guid) {
-        missionScope.uncategorisedMissions.push(mission);
-        missionScope.categoryContent[category].splice(i, 1);
-        categoryGUIDs[category].splice(i, 1);
+        missionScope.categoryContent[category].missions.splice(i, 1);
       }
     }
-    missionScope.categoryContent[category].collapse = false;
     w.localStorage.setItem('allCategories', JSON.stringify(missionScope.categoryContent));
     generateAllMissions();
   }
@@ -520,7 +492,8 @@ function init() {
         id: missionScope.categoryContent.length,
         name: categoryName,
         missions: [],
-        collapse: false
+        collapse: false,
+        sortCriteria: 'initial'
       };
       missionScope.categoryContent.push(newCategory);
       w.localStorage.setItem('allCategories', JSON.stringify(missionScope.categoryContent));
@@ -545,19 +518,20 @@ function init() {
     }
   }
 
-  missionScope.sortCategory = function(category, criteria){
+  missionScope.sortCategory = function(category){
     if (category == 'all'){
-      missionScope.missions = w.$filter("orderBy")(missionScope.missions, missionScope.sortCriteria[0]);
+      missionScope.missions = w.$filter("orderBy")(missionScope.missions, missionScope.sortCriteria[0] == 'initial' ? 'position' : missionScope.sortCriteria[0]);
     } else if (category == 'unsorted'){
-      missionScope.uncategorisedMissions = w.$filter("orderBy")(missionScope.uncategorisedMissions, missionScope.sortCriteria[missionScope.categoryContent.length]);
+      missionScope.uncategorisedSort = missionScope.sortCriteria[missionScope.categoryContent.length];
     } else {
-      missionScope.categoryContent[category].missions = w.$filter("orderBy")(missionScope.categoryContent[category].missions, missionScope.sortCriteria[category]);
+      missionScope.categoryContent[category].sortCriteria = missionScope.sortCriteria[category];
     }
     generateAllMissions();
   }
 
   var generateSort = function (category){
     var criteria = [
+      {name: "Initial", value: "initial"},
       {name: "Alphabetical (ascending)", value: "definition.name"},
       {name: "Alphabetical (descending)", value: "-definition.name"},
       {name: "Creation order", value: "created_ms"},
@@ -660,6 +634,7 @@ function init() {
     newMissionCode += "</div></div>";
     return newMissionCode;
   }
+
   var generateAllMissions = function() {
     $(".missions-list").empty();
     if (missionScope.categoryContent.length == 0) {
@@ -669,7 +644,34 @@ function init() {
     w.$injector.invoke(function($compile) {
       var missionContent = "";
       if (missionScope.categoryContent.length > 0) {
-        //if there are user-defined categories, loop over them
+        //if there are user-defined categories, first sort the categorised/uncategorised missions
+        missionScope.categorisedMissions = [];
+        missionScope.uncategorisedMissions = angular.copy(missionScope.missions);
+
+        //loop through each category of GUIDs, and add actual missions to scope
+        missionScope.categoryContent.forEach(function(category) {
+          var catobj = [];
+          category.missions.forEach(function(guid) {
+            //TODO: Do this with filters, not loops
+            for (var i = 0; i < missionScope.uncategorisedMissions.length ; i++) {
+              //once the right mission is found, add position, push it to the holding array and remove from uncategorised
+              if (missionScope.uncategorisedMissions[i].mission_guid == guid) {
+                catobj.push(missionScope.uncategorisedMissions[i]);
+                missionScope.uncategorisedMissions.splice(i, 1);
+                break;
+              }
+            }
+          })
+          missionScope.categorisedMissions.push(catobj);
+        })
+
+        //then get the categories sorted
+        missionScope.categoryContent.forEach(function(category) {
+            if (category.sortCriteria != 'initial') {missionScope.categorisedMissions[category.id] = w.$filter("orderBy")(missionScope.categorisedMissions[category.id], category.sortCriteria);}
+        })
+        if (missionScope.uncategorisedSort != 'initial') {missionScope.uncategorisedMissions = w.$filter("orderBy")(missionScope.uncategorisedMissions, missionScope.uncategorisedSort);}
+
+        //once all the categorisation is done, create the HTML for the categories!
         missionContent += "<div class='panel-group' id='accordion' role='tablist' aria-multiselectable='true' style='width: 100%'>";
         for (var i = 0; i < missionScope.categoryContent.length; i++) {
           missionContent += "<div class='panel panel-default'><div class='panel-heading' role='tab'>";
@@ -679,15 +681,15 @@ function init() {
           missionContent += "<div class='row'><div class='col-xs-12'>";
           missionContent += generateSort(i);
           missionContent += "<button class='btn btn-default'style='float: right!important;margin: 5px 0;' ng-click='deleteCategory(" + i + ")'>Delete Category</button>";
-          if (!missionScope.categoryContent[i] || missionScope.categoryContent[i].length == 0) {
+          if (!missionScope.categoryContent[i].missions || missionScope.categoryContent[i].missions.length == 0) {
             //no missions so far!
             missionContent += "</div><div class='col-xs-12'>No missions added to the category yet</div>";
           } else {
             missionContent += "<button class='btn btn-default'style='float: right!important;margin: 5px;' data-toggle='modal' data-target='#previewBanner" + i + "'>Preview Images</button>";
             missionContent += "<button class='btn btn-default'style='float: right!important;margin: 5px;' ng-click='previewBanner(" + i + ")' data-toggle='modal' data-target='#previewMissionModel'>Preview Route</button></div>";
             var bannerModal = "<div class='modal fade' id='previewBanner" + i + "' tabindex='-1' role='dialog'><div class='modal-dialog modal-lg' role='document'><div class='modal-content banner-preview'><div class='modal-header'><button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button><h4 class='modal-title'>Preview \"" + missionScope.categoryContent[i].collapse + "\"</h4></div><div class='modal-body'><div class='row'>";
-            for (var j = 0; j < missionScope.categoryContent[i].length; j++) {
-              var mission = missionScope.categoryContent[i].missions[j];
+            for (var j = 0; j < missionScope.categoryContent[i].missions.length; j++) {
+              var mission = missionScope.categorisedMissions[i][j];
               missionContent += generateMission(mission, mission.position, i);
               bannerModal += "<div class='col-xs-2'><img class='img-responsive' src='" + (mission.definition.logo_url ? mission.definition.logo_url : "/images/button_logo.png") + "' /></div>";
             }
@@ -774,7 +776,7 @@ function init() {
     var sapMissions = w.$filter('filter')(missionScope.missions, {missionListState: "SUBMITTED_AND_PUBLISHED"}, true).length;
     var publishedMissions = w.$filter('filter')(missionScope.missions, {missionListState: "PUBLISHED"}, true).length;
     var remainder = 150 - (dopMissions + submittedMissions + sapMissions + publishedMissions);
-    buttonContent += "<h4 style='margin: 0 0 20px;'>";
+    buttonContent += "<h4 style='line-height: 2;'>";
     if (remainder > 0) {
       buttonContent += "<span class='label'>"+remainder+" missions remaining</span> ";
     }
