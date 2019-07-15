@@ -303,7 +303,7 @@ function init() {
     missionScope.uncategorisedSort = 'initial';
     missionScope.missions = w.$filter("orderBy")(missionScope.missions, 'definition.name');
     missionScope.loadingPreview = false;
-    missionScope.unsortedCollapse = w.localStorage.getItem('unsortedCollapse') || true;
+    missionScope.unsortedCollapse = {collapse: w.localStorage.getItem('unsortedCollapse') || true};
 
     //handling for legacy data format
     if (!!w.localStorage.getItem('categoryNames')){
@@ -495,6 +495,7 @@ function init() {
       generateAllMissions();
     }
   }
+
   missionScope.nukeCategories = function() {
     missionScope.categoryContent = [];
     w.localStorage.setItem('allCategories', []);
@@ -522,6 +523,12 @@ function init() {
       missionScope.categoryContent[category].sortCriteria = missionScope.sortCriteria[category];
     }
     generateAllMissions();
+  }
+
+  missionScope.toggleCollapse = function(collapse, unsorted){
+    collapse.collapse = !collapse.collapse;
+    unsorted ? w.localStorage.setItem('unsortedCollapse', collapse.collapse)
+      : w.localStorage.setItem('allCategories', JSON.stringify(missionScope.categoryContent));
   }
 
   var generateSort = function (category){
@@ -670,7 +677,7 @@ function init() {
         missionContent += "<div class='panel-group' id='accordion' role='tablist' aria-multiselectable='true' style='width: 100%'>";
         for (var i = 0; i < missionScope.categoryContent.length; i++) {
           missionContent += "<div class='panel panel-default'><div class='panel-heading' role='tab'>"
-            + "<h4 class='panel-title' ng-class='{\"collapsed\" : categoryContent[" + i + "].collapse}'><a ng-click='categoryContent[" + i + "].collapse = !categoryContent[" + i + "].collapse' role='button' data-toggle='collapse'>"
+            + "<h4 class='panel-title' ng-class='{\"collapsed\" : categoryContent[" + i + "].collapse}'><a ng-click='toggleCollapse(categoryContent[" + i + "], false)' role='button' data-toggle='collapse'>"
             + missionScope.categoryContent[i].name
             + "</a></h4></div><div class='panel-collapse collapse' ng-class='{\"in\" : !categoryContent[" + i + "].collapse}' role='tabpanel'><div class='panel-body'>"
             + "<div class='row'><div class='col-xs-12'>"
@@ -695,7 +702,7 @@ function init() {
         }
         //add unsorted missions if there are any
         missionContent += "<div class='panel panel-default'><div class='panel-heading' role='tab' id='header-unsorted'>"
-          + "<h4 class='panel-title' ng-class='{\"collapsed\" : unsortedCollapse}'><a ng-click='unsortedCollapse = !unsortedCollapse' role='button' data-toggle='collapse'>Unsorted Missions</a></h4></div><div class='panel-collapse collapse' ng-class='{\"in\" : !unsortedCollapse}' role='tabpanel'><div class='panel-body'>"
+          + "<h4 class='panel-title' ng-class='{\"collapsed\" : unsortedCollapse.collapse}'><a ng-click='toggleCollapse(unsortedCollapse, true)' role='button' data-toggle='collapse'>Unsorted Missions</a></h4></div><div class='panel-collapse collapse' ng-class='{\"in\" : !unsortedCollapse.collapse}' role='tabpanel'><div class='panel-body'>"
           + "<div class='row'><div class='col-xs-12'>"
           + generateSort('unsorted')
           + "</div>";
