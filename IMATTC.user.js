@@ -169,6 +169,7 @@ function init() {
     w.$q = w.$app.injector().get('$q');
     w.$http = w.$app.injector().get('$http');
     w.WireUtil = w.$app.injector().get('WireUtil');
+    w.Api = w.$app.injector().get('Api');
 
     w.$rootScope.$on('$routeChangeStart', function(next, last) {
       setTimeout(() => {
@@ -215,6 +216,26 @@ function init() {
 
   function missionEditSetup(editScope) {
     var editStep = editScope.mission.ui.view;
+
+    //overwrite submitMission function to inject categorisation
+    editScope.submitMission = function() {
+        var b = WireUtil.convertMissionLocalToWire(editScope.mission)
+          , d = angular.copy(b);
+        d.submit = true;
+        editScope.saving = true;
+        editScope.savingFailed = false;
+        editScope.saved = false;
+        w.$http.post(w.Api.SAVE_MISSION, d).success(function(d) {
+            editScope.saving = false;
+            editScope.saved = true;
+            editScope.savedWireMission = b;
+            //insert categorisation here
+            w.$location.url("/")
+        }).error(function(b) {
+            editScope.saving = false;
+            editScope.savingFailed = true
+        })
+    }
 
     editScope.isBreadcrumbDisabled = function(step){
       var validGoTo = false;
