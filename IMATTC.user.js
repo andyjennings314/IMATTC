@@ -117,6 +117,8 @@ $(function() {
     + ".upload-logo .input-row .upload-label {display: block;padding: 0 0 10px;}"
     + ".upload-logo .input-row {display: block;}"
     + ".upload-logo .input-row .upload-logo-cell, .upload-logo .input-row .clear-logo-button {display: inline-block;padding: 0; max-width: 50%;}"
+    + ".preview-mission .body-panel .panel-container .map {height: unset;}"
+    + ".preview-mission .body-panel .panel-container .category-dropdown {margin-top: 20px;}"
     + ".preview-mission .mission-header {margin: 0; width: 65%; float: left;)}"
     + ".preview-mission .mission-stats, .preview-mission .mission-description {max-width: 35%;float: right; display: inline-block;}"
     + "#previewMissionModel .loading-screen { top: 0; right: 0; position: relative; height: 40px;}"
@@ -229,7 +231,13 @@ function init() {
             editScope.saving = false;
             editScope.saved = true;
             editScope.savedWireMission = b;
-            //insert categorisation here
+            //if a category is selected, push the mission to that category
+            if (editScope.selectedCategoryID) {
+              editScope.categoryContent[editScope.selectedCategoryID].missions.push(editScope.savedWireMission.mission_guid);
+              editScope.categoryContent[editScope.selectedCategoryID].collapse = false;
+              editScope.selectedCategoryID = null;
+              w.localStorage.setItem('allCategories', JSON.stringify(editScope.categoryContent));
+            }
             w.$location.url("/")
         }).error(function(b) {
             editScope.saving = false;
@@ -265,14 +273,14 @@ function init() {
       + "<li" + (editScope.IsViewActive(editScope.EditorScreenViews.PREVIEW) ? " class='active'" : "")
       + "><a role='button' ng-disabled='isBreadcrumbDisabled(EditorScreenViews.PREVIEW)' ng-click='bulletSetView(EditorScreenViews.PREVIEW)'>Preview</a></li>"
       + "</ul>";
-
     var compiledBread = $compile(newBreadcrumb)(editScope);
     $(".view").append(compiledBread);
 
+    var editCode;
     if (editStep == editScope.EditorScreenViews.TYPE) {
       //Overhauled UI on Mission Type page, including more editorialising on non-linear missions in banners
       $(".type-view .bordered-panel").empty().addClass('ready');
-      var editCode = "<div class='btn-group btn-group-justified'>"
+      editCode = "<div class='btn-group btn-group-justified'>"
         + "<div class='btn-group'><button class='btn btn-lg' ng-click='mission.definition._sequential = true; mission.definition._hidden = false' ng-class='{active: mission.definition._sequential && !mission.definition._hidden}'><i class='glyphicon glyphicon-arrow-right'></i>&nbsp;&nbsp;SEQUENTIAL</button></div>"
         + "<div class='btn-group'><button class='btn btn-lg' ng-click='mission.definition._sequential = true; mission.definition._hidden = true' ng-class='{active: mission.definition._sequential && mission.definition._hidden}'><i class='glyphicon glyphicon-eye-close'></i>&nbsp;&nbsp;HIDDEN SEQUENTIAL</button></div>"
         + "<div class='btn-group'><button class='btn btn-lg' ng-click='mission.definition._sequential = false; mission.definition._hidden = false' ng-class='{active: !mission.definition._sequential}'><i class='glyphicon glyphicon-random'></i>&nbsp;&nbsp;ANY ORDER</button></div>"
@@ -285,7 +293,7 @@ function init() {
     } else if (editStep == editScope.EditorScreenViews.NAME) {
       //Overhauled UI on Mission Name/Image pages
       $(".name-view .bordered-panel").empty().addClass('ready');
-      var editCode = "<div class='row'><div class='col-sm-8 form-horizontal'><div class='form-group'>"
+      editCode = "<div class='row'><div class='col-sm-8 form-horizontal'><div class='form-group'>"
         + "<label for='missionName' class='col-sm-2 control-label'>Mission Name</label>"
         + "<div class='col-sm-10'><input type='text' id='missionName' ng-model='mission.definition.name' class='form-control' placeholder='Add mission name' ng-class='{\"invalid\": !mission.definition.name}' maxlength='" + editScope.MissionRules.MAX_MISSION_NAME_LENGTH + "'>"
         + "</div></div><div class='form-group'>"
@@ -296,6 +304,21 @@ function init() {
         + "</div></div>";
       var compiledContent = $compile(editCode)(editScope);
       $(".name-view .bordered-panel").append(compiledContent);
+    } else if (editStep == editScope.EditorScreenViews.PREVIEW) {
+      //If there are user generated categories, add a dropdown to add the new mission to one
+      editScope.categoryContent = JSON.parse(w.localStorage.getItem('allCategories')) || [];
+      if (editScope.categoryContent.length > 0){
+        editScope.selectedCategoryID = null;
+        editCode = "<div class='category-dropdown'>"
+          + "<select class='form-control' ng-model='selectedCategoryID'>"
+          + "<option value=''>OPTIONAL: Select a category to add this mission to</option>";
+          for (var i = 0; i < editScope.categoryContent.length; i++) {
+            editCode += "<option value='" + i + "'>" + editScope.categoryContent[i].name + "</option>";
+          }
+        editCode += "</select></div>";
+        var compiledContent = $compile(editCode)(editScope);
+        $(".body-panel > .panel-container").append(compiledContent);
+      }
     }
 
     //Runs pageChange() function when changing between Edit states
