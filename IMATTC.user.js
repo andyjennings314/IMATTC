@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         IMATTC
-// @version      1.5.1
+// @version      1.5.2
 // @description  A usability overhaul for the Ingress Mission Authoring Tool
 // @author       @Chyld314
 // @match        https://mission-author-dot-betaspike.appspot.com/
@@ -741,11 +741,15 @@ function init() {
   }
 
   missionScope.exportData = function() {
-    prompt("Copy this text and paste it into the textbox for Import Data", JSON.stringify(missionScope.categoryContent));
+    navigator.clipboard.writeText(JSON.stringify(missionScope.categoryContent)).then(function() {
+      alert('Category data copied to your clipboard - please paste this in the Import Data box in the browser you want to export this to')
+    }, function() {
+      alert('Something went wrong')
+    });
   };
 
   missionScope.importData = function() {
-    var dataInput = prompt("Please paste in the text you got from the Export Data popup");
+    var dataInput = prompt("Please paste in the text you got from the Data Export on your other device");
     if (dataInput == null || dataInput == "") {
       //don't do anything
     } else {
