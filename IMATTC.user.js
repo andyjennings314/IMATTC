@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         IMATTC
-// @version      1.5.2
+// @version      1.5.3
 // @description  A usability overhaul for the Ingress Mission Authoring Tool
 // @author       @Chyld314
 // @match        https://mission-author-dot-betaspike.appspot.com/
@@ -106,6 +106,8 @@ $(function() {
     + ".editor .type-view, .editor .name-view  {width: 100%;}"
     + ".pagination>li>a 							{background: #0b0c0d;border-color: #5afbea;color: #5afbea; font-size: 18px;}"
     + ".pagination>li>a:hover 						{background: #2b2c2d;border-color: #5afbea;color: #5afbea;}"
+    + ".pagination>li>a[disabled] 							{color: #ACAFAF;}"
+    + ".pagination>li>a[disabled]:hover 						{cursor: default; background: #0b0c0d;border-color: #5afbea;color: #ACAFAF;}"
     + ".pagination>.active>a, .pagination>.active>a:hover {background-color: #5afbea;border-color: #5afbea;color: #0b0c0d;}"
     + ".type-view .btn.focus, .type-view .btn:focus, .type-view .btn:hover {color: unset;}"
     + ".type-view .btn.active.focus, .type-view .btn.active:focus, .type-view .btn.active:hover {color: #ebbc4a;}"
@@ -214,13 +216,33 @@ function init() {
   function missionEditSetup(editScope) {
     var editStep = editScope.mission.ui.view;
 
+    editScope.isBreadcrumbDisabled = function(step){
+      var validGoTo = false;
+      switch (step) {
+        case editScope.EditorScreenViews.TYPE:
+        case editScope.EditorScreenViews.NAME:
+            validGoTo = editScope.isTypeValid();
+            break;
+        case editScope.EditorScreenViews.WAYPOINTS:
+            validGoTo = editScope.isTypeValid() && !editScope.detailsErrors.hasErrors;
+            break;
+        case editScope.EditorScreenViews.PREVIEW:
+            validGoTo = editScope.isTypeValid() && !editScope.detailsErrors.hasErrors && !editScope.waypointErrors.hasErrors
+      }
+      return !validGoTo;
+    }
+
     //Replace breadcrumb with something a bit clearer
     $(".view").empty();
-    var newBreadcrumb = "<ul class='pagination'>";
-      + "<li" + (editScope.IsViewActive(editScope.EditorScreenViews.TYPE) ? " class='active'" : "") + "><a role='button' ng-click='bulletSetView(EditorScreenViews.TYPE)'>Mission Type</a></li>"
-      + "<li" + (editScope.IsViewActive(editScope.EditorScreenViews.NAME) ? " class='active'" : "") + "><a role='button' ng-click='bulletSetView(EditorScreenViews.NAME)'>Mission Details</a></li>"
-      + "<li" + (editScope.IsViewActive(editScope.EditorScreenViews.WAYPOINTS) ? " class='active'" : "") + "><a role='button' ng-click='bulletSetView(EditorScreenViews.WAYPOINTS)'>Waypoints</a></li>"
-      + "<li" + (editScope.IsViewActive(editScope.EditorScreenViews.PREVIEW) ? " class='active'" : "") + "><a role='button' ng-click='bulletSetView(EditorScreenViews.PREVIEW)'>Preview</a></li>"
+    var newBreadcrumb = "<ul class='pagination'>"
+      + "<li" + (editScope.IsViewActive(editScope.EditorScreenViews.TYPE) ? " class='active'" : "")
+      + "><a role='button' ng-disabled='isBreadcrumbDisabled(EditorScreenViews.TYPE)' ng-click='bulletSetView(EditorScreenViews.TYPE)'>Mission Type</a></li>"
+      + "<li" + (editScope.IsViewActive(editScope.EditorScreenViews.NAME) ? " class='active'" : "")
+      + "><a role='button' ng-disabled='isBreadcrumbDisabled(EditorScreenViews.NAME)' ng-click='bulletSetView(EditorScreenViews.NAME)'>Mission Details</a></li>"
+      + "<li" + (editScope.IsViewActive(editScope.EditorScreenViews.WAYPOINTS) ? " class='active'" : "")
+      + "><a role='button' ng-disabled='isBreadcrumbDisabled(EditorScreenViews.WAYPOINTS)' ng-click='bulletSetView(EditorScreenViews.WAYPOINTS)'>Waypoints</a></li>"
+      + "<li" + (editScope.IsViewActive(editScope.EditorScreenViews.PREVIEW) ? " class='active'" : "")
+      + "><a role='button' ng-disabled='isBreadcrumbDisabled(EditorScreenViews.PREVIEW)' ng-click='bulletSetView(EditorScreenViews.PREVIEW)'>Preview</a></li>"
       + "</ul>";
 
     var compiledBread = $compile(newBreadcrumb)(editScope);
