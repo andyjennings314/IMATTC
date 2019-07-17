@@ -321,7 +321,7 @@ function init() {
           editScope.selectedCategoryID = null;
           editCode = "<div class='category-dropdown'>"
             + "<select class='form-control' ng-model='selectedCategoryID'>"
-            + "<option value=''>OPTIONAL: Select a category to add this mission to</option>";
+            + "<option value='null'>OPTIONAL: Select a category to add this mission to</option>";
             for (var i = 0; i < editScope.categoryContent.length; i++) {
               editCode += "<option value='" + i + "'>" + editScope.categoryContent[i].name + "</option>";
             }
