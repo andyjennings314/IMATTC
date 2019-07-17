@@ -307,17 +307,28 @@ function init() {
     } else if (editStep == editScope.EditorScreenViews.PREVIEW) {
       //If there are user generated categories, add a dropdown to add the new mission to one
       editScope.categoryContent = JSON.parse(w.localStorage.getItem('allCategories')) || [];
-      if (editScope.categoryContent.length > 0){
-        editScope.selectedCategoryID = null;
-        editCode = "<div class='category-dropdown'>"
-          + "<select class='form-control' ng-model='selectedCategoryID'>"
-          + "<option value=''>OPTIONAL: Select a category to add this mission to</option>";
-          for (var i = 0; i < editScope.categoryContent.length; i++) {
-            editCode += "<option value='" + i + "'>" + editScope.categoryContent[i].name + "</option>";
+      if (editScope.categoryContent.length > 0 && editScope.mission.mission_guid){
+        var showCategory = true;
+        editScope.categoryContent.forEach(function(category){
+          for (var i = 0; i < category.missions.length; i++){
+            if (category.missions[i] == editScope.mission.mission_guid){
+              showCategory = false;
+              break;
+            }
           }
-        editCode += "</select></div>";
-        var compiledContent = $compile(editCode)(editScope);
-        $(".body-panel > .panel-container").append(compiledContent);
+        })
+        if (showCategory){
+          editScope.selectedCategoryID = null;
+          editCode = "<div class='category-dropdown'>"
+            + "<select class='form-control' ng-model='selectedCategoryID'>"
+            + "<option value=''>OPTIONAL: Select a category to add this mission to</option>";
+            for (var i = 0; i < editScope.categoryContent.length; i++) {
+              editCode += "<option value='" + i + "'>" + editScope.categoryContent[i].name + "</option>";
+            }
+          editCode += "</select></div>";
+          var compiledContent = $compile(editCode)(editScope);
+          $(".body-panel > .panel-container").append(compiledContent);
+        }
       }
     }
 
@@ -338,7 +349,7 @@ function init() {
       var dfd = w.$q.defer();
       var missionPromises = [];
       angular.forEach(missions, function(mission) {
-        if(mission.missionListState != "DRAFT" && mission.missionListState != "SUBMITTED"){
+        if (mission.missionListState != "DRAFT" && mission.missionListState != "SUBMITTED"){
           var mId = mission.mission_guid;
           missionPromises.push($http.post("https://mission-author-dot-betaspike.appspot.com/api/author/getMissionForProfile", {mission_guid: mId}));
         } else {
