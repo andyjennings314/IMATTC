@@ -5,6 +5,7 @@
 // @author       @Chyld314
 // @match        https://mission-author-dot-betaspike.appspot.com/
 // @match        https://mission-author-dot-betaspike.appspot.com/edit*
+// @require      https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js
 // @grant        none
 // @downloadURL	 https://github.com/andyjennings314/IMATTC/raw/master/IMATTC.user.js
 // @updateURL	 https://github.com/andyjennings314/IMATTC/raw/master/IMATTC.user.js
@@ -19,7 +20,6 @@ if (!$) {
 $(function() {
   'use strict';
   //Latest version of Bootstrap, and correct version of jQuery
-
   $("link[href='vendor/bootstrap/css/bootstrap.css']").attr("href", "https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
 
   // Modify time conversion variables to ones with actual granularity
@@ -304,6 +304,30 @@ function init() {
         + "</div></div>";
       var compiledContent = $compile(editCode)(editScope);
       $(".name-view .bordered-panel").append(compiledContent);
+    }else if (editStep == editScope.EditorScreenViews.WAYPOINTS){
+      //Adding drag-and-drop mission reordering
+      //First, watch whether the user can see the list of waypoints
+      editScope.$watch('shouldShowWaypointList()', function() {
+        //if so, wait half a second and apply the JQueryUI sortable parameter to the list thereof
+        if (editScope.shouldShowWaypointList()){
+          setTimeout(() => {
+            //checks start position on start, end position on end, and sends them to the native change position function
+            $('#waypoints').sortable({
+              start: function(event, ui) {
+                var start_pos = ui.item.index();
+                ui.item.data('start_pos', start_pos);
+              },
+              update: function (event, ui) {
+                var start_pos = ui.item.data('start_pos');
+                var end_pos = ui.item.index();
+                editScope.$apply(function(){
+                  editScope.changeWaypointPosition(start_pos, end_pos);
+                })
+              }
+            });
+          }, 500);
+        }
+      });
     } else if (editStep == editScope.EditorScreenViews.PREVIEW) {
       //If there are user generated categories, add a dropdown to add the new mission to one
       editScope.categoryContent = JSON.parse(w.localStorage.getItem('allCategories')) || [];
