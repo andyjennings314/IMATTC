@@ -5,7 +5,7 @@
 // @author       @Chyld314
 // @match        https://mission-author-dot-betaspike.appspot.com/
 // @match        https://mission-author-dot-betaspike.appspot.com/edit*
-// @require      https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js
+// @require      https://code.jquery.com/ui/1.10.4/jquery-ui.min.js
 // @grant        none
 // @downloadURL	 https://github.com/andyjennings314/IMATTC/raw/master/IMATTC.user.js
 // @updateURL	 https://github.com/andyjennings314/IMATTC/raw/master/IMATTC.user.js
@@ -21,6 +21,7 @@ $(function() {
   'use strict';
   //Latest version of Bootstrap, and correct version of jQuery
   $("link[href='vendor/bootstrap/css/bootstrap.css']").attr("href", "https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
+  $('body').append('<script src="https://code.jquery.com/ui/1.10.4/jquery-ui.min.js"></script>');
 
   // Modify time conversion variables to ones with actual granularity
   TimeConversionConstants.MINUTE_GRANULARITY_MINUTES = 1;
@@ -117,6 +118,8 @@ $(function() {
     + ".upload-logo .input-row .upload-label {display: block;padding: 0 0 10px;}"
     + ".upload-logo .input-row {display: block;}"
     + ".upload-logo .input-row .upload-logo-cell, .upload-logo .input-row .clear-logo-button {display: inline-block;padding: 0; max-width: 50%;}"
+    + ".editor .waypoints-view .waypoints .waypoint.unselected {background-color: #000;}"
+    + ".editor .waypoints-view .waypoints .waypoint .number {cursor: move;}"
     + ".preview-mission .body-panel .panel-container .map {height: unset;}"
     + ".preview-mission .body-panel .panel-container .category-dropdown {margin-top: 20px;}"
     + ".preview-mission .mission-header {margin: 0; width: 65%; float: left;)}"
@@ -313,6 +316,8 @@ function init() {
           setTimeout(() => {
             //checks start position on start, end position on end, and sends them to the native change position function
             $('#waypoints').sortable({
+              handle: '.number',
+              axis: 'y',
               start: function(event, ui) {
                 var start_pos = ui.item.index();
                 ui.item.data('start_pos', start_pos);
