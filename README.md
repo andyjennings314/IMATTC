@@ -39,17 +39,19 @@ Lastly, there's even a button at the top of each category, to preview its conten
   - More distinct colouration and iconography for mission status
   - Consistent mission sorting criteria, including user-defined criteria
   - Ability to preview missions, both in mission editor and Ingress Intel map
+  - Drag-and-drop waypoint reordering in Waypoint view
 - User-created categories for missions, including image and route preview functionality.
 - Minor UI enhancements to mission creation/editing
 
 ## Upcoming features
 - Export to [IngressMosaik](https://ingressmosaik.com) functionality
-- Drag-and-drop waypoint reordering in Waypoint view
 - Drag-and-drop functionality for custom categories
-- Additional mission sort criteria, including "inital category order" criterion
+- Additional mission sort criteria
 - Searching missions
 
 ## Release History
+- 1.6.0: Enabled waypoint reordering on Waypoiny view.
+- 1.5.4: Enabled exporting and importing category data. Ability to categorise missions from Preview Mission step.
 - 1.4.0: Added ability to preview route of missions in category, including distance and duration.
 - 1.3.0: Added ability to preview missions using mission editor. Laid groundwork for previewing banner routes. Refactored overall mission status counts
 - 1.2.0: Added sorting criteria for categories, uncategorised, and all-when-there's-no-categories
