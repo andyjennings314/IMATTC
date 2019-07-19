@@ -329,7 +329,11 @@ function init() {
                   var end_pos = ui.item.index();
                   editScope.$apply(function(){
                     editScope.changeWaypointPosition(start_pos, end_pos);
-                  })
+                  });
+                  editScope.mission.definition.waypoints.forEach(function(waypoint){
+                    editScope.setSelectedWaypoint(waypoint);
+                  });
+                  editScope.setSelectedWaypoint(editScope.mission.definition.waypoints[end_pos]);
                 }
               });
             }, 500);
