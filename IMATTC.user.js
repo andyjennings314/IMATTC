@@ -279,86 +279,94 @@ function init() {
     var compiledBread = $compile(newBreadcrumb)(editScope);
     $(".view").append(compiledBread);
 
-    var editCode;
-    if (editStep == editScope.EditorScreenViews.TYPE) {
-      //Overhauled UI on Mission Type page, including more editorialising on non-linear missions in banners
-      $(".type-view .bordered-panel").empty().addClass('ready');
-      editCode = "<div class='btn-group btn-group-justified'>"
-        + "<div class='btn-group'><button class='btn btn-lg' ng-click='mission.definition._sequential = true; mission.definition._hidden = false' ng-class='{active: mission.definition._sequential && !mission.definition._hidden}'><i class='glyphicon glyphicon-arrow-right'></i>&nbsp;&nbsp;SEQUENTIAL</button></div>"
-        + "<div class='btn-group'><button class='btn btn-lg' ng-click='mission.definition._sequential = true; mission.definition._hidden = true' ng-class='{active: mission.definition._sequential && mission.definition._hidden}'><i class='glyphicon glyphicon-eye-close'></i>&nbsp;&nbsp;HIDDEN SEQUENTIAL</button></div>"
-        + "<div class='btn-group'><button class='btn btn-lg' ng-click='mission.definition._sequential = false; mission.definition._hidden = false' ng-class='{active: !mission.definition._sequential}'><i class='glyphicon glyphicon-random'></i>&nbsp;&nbsp;ANY ORDER</button></div>"
-        + "</div><br />"
-        + "<p ng-show='mission.definition._sequential && !mission.definition._hidden'>Agents visit portals and field trip markers in a set order.<br/><br/>Best suited to missions in a banner series, or one-offs with a pre-determined route.</p>"
-        + "<p ng-show='mission.definition._sequential && mission.definition._hidden'>Agents visit portals and field trip markers in a set order, but the location of every waypoint beyond the first is hidden, meaning players rely on clues in the waypoint text.<br/><br/>Good for more puzzle-based missions, but please ensure you provide adequate clues for agents to find all the waypoints.</p>"
-        + "<p ng-show='!mission.definition._sequential'>Agents visit portals and field trip markers in any order. Excellent for one-off missions where a specific route isn't required, but terrible for missions in banner serieses.<br /><br /><span class='stopthat'>It is strongly advised that if you are making missions for a banner, you set them as Sequential missions - your rating on IngressMosaik will thank you! </span></p>";
-      var compiledContent = $compile(editCode)(editScope);
-      $(".type-view .bordered-panel").append(compiledContent);
-    } else if (editStep == editScope.EditorScreenViews.NAME) {
-      //Overhauled UI on Mission Name/Image pages
-      $(".name-view .bordered-panel").empty().addClass('ready');
-      editCode = "<div class='row'><div class='col-sm-8 form-horizontal'><div class='form-group'>"
-        + "<label for='missionName' class='col-sm-2 control-label'>Mission Name</label>"
-        + "<div class='col-sm-10'><input type='text' id='missionName' ng-model='mission.definition.name' class='form-control' placeholder='Add mission name' ng-class='{\"invalid\": !mission.definition.name}' maxlength='" + editScope.MissionRules.MAX_MISSION_NAME_LENGTH + "'>"
-        + "</div></div><div class='form-group'>"
-        + "<label for='missionDesc' class='col-sm-2 control-label'>Mission Description</label>"
-        + "<div class='col-sm-10'><textarea id='missionDesc' class='form-control' rows='4' ng-model='mission.definition.description' placeholder='Add mission description' ng-class='{\"invalid\": !mission.definition.description}' maxlength='" + editScope.MissionRules.MAX_MISSION_DESCRIPTION_LENGTH + "'></textarea>"
-        + "</div></div></div><div class='col-sm-4'"
-        + "<div mission-logo-upload max-size='{{LogoParams.MAX_SIZE_BYTES}}' success='logoUploadSuccess' error='logoUploadFailure' pre-post='ensureMissionHasGuid' accept='image/*' type-restriction='image/(gif|jpeg|jpg|png)' mission='mission'></div>"
-        + "</div></div>";
-      var compiledContent = $compile(editCode)(editScope);
-      $(".name-view .bordered-panel").append(compiledContent);
-    }else if (editStep == editScope.EditorScreenViews.WAYPOINTS){
-      //Adding drag-and-drop mission reordering
-      //First, watch whether the user can see the list of waypoints
-      editScope.$watch('shouldShowWaypointList()', function() {
-        //if so, wait half a second and apply the JQueryUI sortable parameter to the list thereof
-        if (editScope.shouldShowWaypointList()){
-          setTimeout(() => {
-            //checks start position on start, end position on end, and sends them to the native change position function
-            $('#waypoints').sortable({
-              handle: '.number',
-              axis: 'y',
-              start: function(event, ui) {
-                var start_pos = ui.item.index();
-                ui.item.data('start_pos', start_pos);
-              },
-              update: function (event, ui) {
-                var start_pos = ui.item.data('start_pos');
-                var end_pos = ui.item.index();
-                editScope.$apply(function(){
-                  editScope.changeWaypointPosition(start_pos, end_pos);
-                })
-              }
-            });
-          }, 500);
-        }
-      });
-    } else if (editStep == editScope.EditorScreenViews.PREVIEW) {
-      //If there are user generated categories, add a dropdown to add the new mission to one
-      editScope.categoryContent = JSON.parse(w.localStorage.getItem('allCategories')) || [];
-      if (editScope.categoryContent.length > 0 && editScope.mission.mission_guid){
-        var showCategory = true;
-        editScope.categoryContent.forEach(function(category){
-          for (var i = 0; i < category.missions.length; i++){
-            if (category.missions[i] == editScope.mission.mission_guid){
-              showCategory = false;
-              break;
-            }
+    //view specific fixes
+    var editCode, editTarget, compiledContent;
+    switch (editStep){
+      case editScope.EditorScreenViews.TYPE:
+        editTarget = $(".type-view .bordered-panel");
+        //Overhauled UI on Mission Type page, including more editorialising on non-linear missions in banners
+        $(".type-view .bordered-panel").empty().addClass('ready');
+        editCode = "<div class='btn-group btn-group-justified'>"
+          + "<div class='btn-group'><button class='btn btn-lg' ng-click='mission.definition._sequential = true; mission.definition._hidden = false' ng-class='{active: mission.definition._sequential && !mission.definition._hidden}'><i class='glyphicon glyphicon-arrow-right'></i>&nbsp;&nbsp;SEQUENTIAL</button></div>"
+          + "<div class='btn-group'><button class='btn btn-lg' ng-click='mission.definition._sequential = true; mission.definition._hidden = true' ng-class='{active: mission.definition._sequential && mission.definition._hidden}'><i class='glyphicon glyphicon-eye-close'></i>&nbsp;&nbsp;HIDDEN SEQUENTIAL</button></div>"
+          + "<div class='btn-group'><button class='btn btn-lg' ng-click='mission.definition._sequential = false; mission.definition._hidden = false' ng-class='{active: !mission.definition._sequential}'><i class='glyphicon glyphicon-random'></i>&nbsp;&nbsp;ANY ORDER</button></div>"
+          + "</div><br />"
+          + "<p ng-show='mission.definition._sequential && !mission.definition._hidden'>Agents visit portals and field trip markers in a set order.<br/><br/>Best suited to missions in a banner series, or one-offs with a pre-determined route.</p>"
+          + "<p ng-show='mission.definition._sequential && mission.definition._hidden'>Agents visit portals and field trip markers in a set order, but the location of every waypoint beyond the first is hidden, meaning players rely on clues in the waypoint text.<br/><br/>Good for more puzzle-based missions, but please ensure you provide adequate clues for agents to find all the waypoints.</p>"
+          + "<p ng-show='!mission.definition._sequential'>Agents visit portals and field trip markers in any order. Excellent for one-off missions where a specific route isn't required, but terrible for missions in banner serieses.<br /><br /><span class='stopthat'>It is strongly advised that if you are making missions for a banner, you set them as Sequential missions - your rating on IngressMosaik will thank you! </span></p>";
+        break;
+      case editScope.EditorScreenViews.NAME:
+        editTarget = $(".name-view .bordered-panel");
+        //Overhauled UI on Mission Name/Image pages
+        $(".name-view .bordered-panel").empty().addClass('ready');
+        editCode = "<div class='row'><div class='col-sm-8 form-horizontal'><div class='form-group'>"
+          + "<label for='missionName' class='col-sm-2 control-label'>Mission Name</label>"
+          + "<div class='col-sm-10'><input type='text' id='missionName' ng-model='mission.definition.name' class='form-control' placeholder='Add mission name' ng-class='{\"invalid\": !mission.definition.name}' maxlength='" + editScope.MissionRules.MAX_MISSION_NAME_LENGTH + "'>"
+          + "</div></div><div class='form-group'>"
+          + "<label for='missionDesc' class='col-sm-2 control-label'>Mission Description</label>"
+          + "<div class='col-sm-10'><textarea id='missionDesc' class='form-control' rows='4' ng-model='mission.definition.description' placeholder='Add mission description' ng-class='{\"invalid\": !mission.definition.description}' maxlength='" + editScope.MissionRules.MAX_MISSION_DESCRIPTION_LENGTH + "'></textarea>"
+          + "</div></div></div><div class='col-sm-4'"
+          + "<div mission-logo-upload max-size='{{LogoParams.MAX_SIZE_BYTES}}' success='logoUploadSuccess' error='logoUploadFailure' pre-post='ensureMissionHasGuid' accept='image/*' type-restriction='image/(gif|jpeg|jpg|png)' mission='mission'></div>"
+          + "</div></div>";
+        break;
+      case editScope.EditorScreenViews.WAYPOINTS:
+        //Adding drag-and-drop mission reordering
+        //First, watch whether the user can see the list of waypoints
+        editScope.$watch('shouldShowWaypointList()', function() {
+          //if so, wait half a second and apply the JQueryUI sortable parameter to the list thereof
+          if (editScope.shouldShowWaypointList()){
+            setTimeout(() => {
+              //checks start position on start, end position on end, and sends them to the native change position function
+              $('#waypoints').sortable({
+                handle: '.number',
+                axis: 'y',
+                start: function(event, ui) {
+                  var start_pos = ui.item.index();
+                  ui.item.data('start_pos', start_pos);
+                },
+                update: function (event, ui) {
+                  var start_pos = ui.item.data('start_pos');
+                  var end_pos = ui.item.index();
+                  editScope.$apply(function(){
+                    editScope.changeWaypointPosition(start_pos, end_pos);
+                  })
+                }
+              });
+            }, 500);
           }
-        })
-        if (showCategory){
-          editScope.selectedCategoryID = null;
-          editCode = "<div class='category-dropdown'>"
-            + "<select class='form-control' ng-model='selectedCategoryID'>"
-            + "<option value='null'>OPTIONAL: Select a category to add this mission to</option>";
-            for (var i = 0; i < editScope.categoryContent.length; i++) {
-              editCode += "<option value='" + i + "'>" + editScope.categoryContent[i].name + "</option>";
+        });
+        break;
+      case editScope.EditorScreenViews.PREVIEW:
+        //If there are user generated categories, add a dropdown to add the new mission to one
+        editScope.categoryContent = JSON.parse(w.localStorage.getItem('allCategories')) || [];
+        if (editScope.categoryContent.length > 0 && editScope.mission.mission_guid){
+          var showCategory = true;
+          editScope.categoryContent.forEach(function(category){
+            for (var i = 0; i < category.missions.length; i++){
+              if (category.missions[i] == editScope.mission.mission_guid){
+                showCategory = false;
+                break;
+
+              }
             }
-          editCode += "</select></div>";
-          var compiledContent = $compile(editCode)(editScope);
-          $(".body-panel > .panel-container").append(compiledContent);
+          })
+          if (showCategory){
+            editScope.selectedCategoryID = null;
+            editTarget = $(".body-panel > .panel-container");
+            editCode = "<div class='category-dropdown'>"
+              + "<select class='form-control' ng-model='selectedCategoryID'>"
+              + "<option value='null'>OPTIONAL: Select a category to add this mission to</option>";
+              for (var i = 0; i < editScope.categoryContent.length; i++) {
+                editCode += "<option value='" + i + "'>" + editScope.categoryContent[i].name + "</option>";
+              }
+            editCode += "</select></div>";
+          }
         }
-      }
+        break;
+    }
+    if (editCode){
+      compiledContent = $compile(editCode)(editScope);
+      editTarget.append(compiledContent);
     }
 
     //Runs pageChange() function when changing between Edit states
@@ -669,7 +677,7 @@ function init() {
 
   var generateMission = function(mission, id, selectedCategory) {
     var missionState = mission.missionListState.toLowerCase();
-    var newMissionCode = "<div class='col-sm-6 col-md-3'><div class='mission mission-list-item-" + missionState + "'>"
+    var newMissionCode = "<div class='col-xs-12 col-sm-6 col-md-3'><div class='mission mission-list-item-" + missionState + "'>"
       + "<div class='mission-header-container'><div>"
       + "<img class='mission-image' src='" + (mission.definition.logo_url ? mission.definition.logo_url + "=s60-c" : "/images/button_logo.png") + "'>"
       + "</div><div>"
@@ -888,24 +896,12 @@ function init() {
     var publishedMissions = w.$filter('filter')(missionScope.missions, {missionListState: "PUBLISHED"}, true).length;
     var remainder = 150 - (dopMissions + submittedMissions + sapMissions + publishedMissions);
     buttonContent += "<h4 style='line-height: 2;'>";
-    if (remainder > 0) {
-      buttonContent += "<span class='label'>"+remainder+" missions remaining</span> ";
-    }
-    if (draftMissions > 0) {
-      buttonContent += "<span class='label mission-list-item-draft'>"+draftMissions+" unpublished drafts</span> ";
-    }
-    if (submittedMissions > 0) {
-      buttonContent += "<span class='label mission-list-item-submitted'>"+submittedMissions+" under review</span> ";
-    }
-    if (dopMissions > 0) {
-      buttonContent += "<span class='label mission-list-item-draft_of_published_mission'>"+dopMissions+" being amended</span> ";
-    }
-    if (sapMissions > 0) {
-      buttonContent += "<span class='label mission-list-item-submitted_and_published'>"+sapMissions+" changes under review</span> ";
-    }
-    if (publishedMissions > 0) {
-      buttonContent += "<span class='label mission-list-item-published'>"+publishedMissions+" published</span>";
-    }
+    remainder > 0 && (buttonContent += "<span class='label'>"+remainder+" missions remaining</span> ");
+    draftMissions > 0 && (buttonContent += "<span class='label mission-list-item-draft'>"+draftMissions+" unpublished drafts</span> ");
+    submittedMissions > 0 && (buttonContent += "<span class='label mission-list-item-submitted'>"+submittedMissions+" under review</span> ");
+    dopMissions > 0 && (buttonContent += "<span class='label mission-list-item-draft_of_published_mission'>"+dopMissions+" being amended</span> ");
+    sapMissions > 0 && (buttonContent += "<span class='label mission-list-item-submitted_and_published'>"+sapMissions+" changes under review</span> ");
+    publishedMissions > 0 && (buttonContent += "<span class='label mission-list-item-published'>"+publishedMissions+" published</span>");
     buttonContent += "</h4>"
     buttonContent += "</div>";
     // Pass our fragment content to $compile, and call the function that $compile returns with the scope.
