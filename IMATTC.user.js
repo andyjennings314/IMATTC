@@ -901,6 +901,7 @@ function init() {
         $('.row[id^=category]').sortable({
           items: "div.missionbox",
           connectWith: ".row[id^=category]",
+          tolerance: "pointer",
           placeholder: "ui-state-highlight col-xs-12 col-sm-6 col-md-3",
           start: function(event, ui) {
             var start_pos = ui.item.index();
