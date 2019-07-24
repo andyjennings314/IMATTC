@@ -17,15 +17,7 @@ You can easily make use of the mission editor like this (just use the "Perform M
 
 ![alt text](https://github.com/andyjennings314/IMATTC/raw/master/img/screen2.PNG "Screenshot 2")
 
-The script will create your new category, and automatically drop all your other missions into "Unsorted Missions". The next step is to add missions to your categories, and this can be found under the "Perform Mission Actions" button:
-
-![alt text](https://github.com/andyjennings314/IMATTC/raw/master/img/screen3.PNG "Screenshot 3")
-
-Next, select the category you want:
-
-![alt text](https://github.com/andyjennings314/IMATTC/raw/master/img/screen4.PNG "Screenshot 4")
-
-And the mission will appear in the category. Now repeat this in sequential order for each mission you want in the category:
+The script will create your new category, and automatically drop all your other missions into "Unsorted Missions". The next step is to add missions to your categories, and this has been made super easy in the latest version of this script - just click and drag the missions you want into the category! You can even click and drag them to reorder their default sorting within the category.
 
 ![alt text](https://github.com/andyjennings314/IMATTC/raw/master/img/screen5.PNG "Screenshot 5")
 
@@ -39,18 +31,19 @@ Lastly, there's even a button at the top of each category, to preview its conten
   - More distinct colouration and iconography for mission status
   - Consistent mission sorting criteria, including user-defined criteria
   - Ability to preview missions, both in mission editor and Ingress Intel map
-  - Drag-and-drop waypoint reordering in Waypoint view
-- User-created categories for missions, including image and route preview functionality.
+- User-created categories for missions, including image and route preview functionality, and drag-and-drop mission sorting and reordering.
+- Drag-and-drop waypoint reordering in Waypoint view
 - Minor UI enhancements to mission creation/editing
+
 
 ## Upcoming features
 - Export to [IngressMosaik](https://ingressmosaik.com) functionality
-- Drag-and-drop functionality for custom categories
 - Additional mission sort criteria
 - Searching missions
 
 ## Release History
-- 1.6.0: Enabled waypoint reordering on Waypoiny view.
+- 1.7.0: Enabled drag-and-drop moving of missions between categories
+- 1.6.0: Enabled waypoint reordering on Waypoint view.
 - 1.5.4: Enabled exporting and importing category data. Ability to categorise missions from Preview Mission step.
 - 1.4.0: Added ability to preview route of missions in category, including distance and duration.
 - 1.3.0: Added ability to preview missions using mission editor. Laid groundwork for previewing banner routes. Refactored overall mission status counts
