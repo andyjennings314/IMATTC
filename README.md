@@ -50,7 +50,7 @@ Lastly, there's even a button at the top of each category, to preview its conten
 - Searching missions
 
 ## Release History
-- 1.6.0: Enabled waypoint reordering on Waypoiny view.
+- 1.6.0: Enabled waypoint reordering on Waypoint view.
 - 1.5.4: Enabled exporting and importing category data. Ability to categorise missions from Preview Mission step.
 - 1.4.0: Added ability to preview route of missions in category, including distance and duration.
 - 1.3.0: Added ability to preview missions using mission editor. Laid groundwork for previewing banner routes. Refactored overall mission status counts
