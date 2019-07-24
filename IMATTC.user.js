@@ -676,7 +676,7 @@ function init() {
     if (endCategory.sortCriteria){
       if (endCategory.sortCriteria == 'initial'){
         //if category is in Initial sorting, respect that sorting
-        endCategory.missions.splice(start_pos, 0, thismission);
+        endCategory.missions.splice(end_pos, 0, thismission);
       } else {
         //if category is not in Inital sorting, dump mission at the end and set it to initial
         endCategory.missions.push(thismission);
