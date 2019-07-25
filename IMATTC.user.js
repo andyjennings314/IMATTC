@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         IMATTC
-// @version      1.7.0
+// @version      1.7.1
 // @description  A usability overhaul for the Ingress Mission Authoring Tool
 // @author       @Chyld314
 // @match        https://mission-author-dot-betaspike.appspot.com/
@@ -623,10 +623,7 @@ function init() {
 
   missionScope.deleteCategory = function(category) {
     if (confirm("Are you sure you want to delete the " + missionScope.categoryContent[category].name + " category? Any missions you've placed in this category will be retured to Unsorted missions.")) {
-      //move scope missions out, nuke localStorage categories
-      missionScope.categoryContent[category].forEach(function(mission) {
-        missionScope.uncategorisedMissions.push(mission);
-      })
+      //nuke localStorage category
       missionScope.categoryContent.splice(category, 1);
       w.localStorage.setItem('allCategories', JSON.stringify(missionScope.categoryContent));
       generateAllMissions();
