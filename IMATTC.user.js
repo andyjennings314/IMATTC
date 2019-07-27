@@ -793,6 +793,7 @@ function init() {
   }
 
   var generateAllMissions = function() {
+    let scrollPosition = w.pageYOffset;
     $(".missions-list").empty();
     if (missionScope.categoryContent.length == 0) {
       $(".missions-list").addClass("row");
@@ -892,6 +893,9 @@ function init() {
       var compiledContent = $compile(missionContent)(missionScope);
       // Put the output of the compilation in to the page using jQuery
       $('.missions-list').append(compiledContent);
+      setTimeout(() => {
+        w.scrollTo(0, scrollPosition);
+      }, 250);
 
       //now enable drag-drop for the missions!
       if (missionScope.categoryContent.length > 0) {
