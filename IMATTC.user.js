@@ -617,7 +617,7 @@ function init() {
 
   missionScope.nukeCategories = function() {
     missionScope.categoryContent = [];
-    w.localStorage.setItem('allCategories', []);
+    w.localStorage.setItem('allCategories', null);
     generateAllMissions();
   }
 
