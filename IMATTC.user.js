@@ -52,7 +52,7 @@ $(function() {
     + ".missions-list .panel-default>.panel-heading+.panel-collapse>.panel-body {border-top-color: black; padding-top: 0;}"
     + ".missions-list .panel-heading a:after {  font-family: 'Glyphicons Halflings';  content: '\\e114';  float: right;  color: 5afbea;  position: relative;  left: 10px; }"
     + ".missions-list .panel-heading h4.collapsed a:after {content: '\\e080'; }"
-    + ".ui-state-highlight { border: 2px solid #5afbea; background: #1f4549; margin-top: 10px;display: block;padding: 0 15px;}"
+    + ".ui-state-highlight { border: 2px solid #5afbea; background: #1f4549; margin-top: 10px;display: block;padding: 0 15px; min-height: 100px;}"
     + ".modal {color: black;}"
     + ".banner-preview .modal-body {background-color: #222;}"
     + ".banner-preview .row {display: flex; flex-direction: row-reverse; flex-wrap:wrap-reverse!important}"
