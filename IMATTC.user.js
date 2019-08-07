@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         IMATTC
-// @version      1.7.0
+// @version      1.7.1
 // @description  A usability overhaul for the Ingress Mission Authoring Tool
 // @author       @Chyld314
 // @match        https://mission-author-dot-betaspike.appspot.com/
@@ -52,7 +52,7 @@ $(function() {
     + ".missions-list .panel-default>.panel-heading+.panel-collapse>.panel-body {border-top-color: black; padding-top: 0;}"
     + ".missions-list .panel-heading a:after {  font-family: 'Glyphicons Halflings';  content: '\\e114';  float: right;  color: 5afbea;  position: relative;  left: 10px; }"
     + ".missions-list .panel-heading h4.collapsed a:after {content: '\\e080'; }"
-    + ".ui-state-highlight { border: 2px solid #5afbea; background: #1f4549; margin-top: 10px;display: block;padding: 0 15px;}"
+    + ".ui-state-highlight { border: 2px solid #5afbea; background: #1f4549; margin-top: 10px;display: block;padding: 0 15px; min-height: 100px;}"
     + ".modal {color: black;}"
     + ".banner-preview .modal-body {background-color: #222;}"
     + ".banner-preview .row {display: flex; flex-direction: row-reverse; flex-wrap:wrap-reverse!important}"
@@ -617,16 +617,13 @@ function init() {
 
   missionScope.nukeCategories = function() {
     missionScope.categoryContent = [];
-    w.localStorage.setItem('allCategories', []);
+    w.localStorage.setItem('allCategories', null);
     generateAllMissions();
   }
 
   missionScope.deleteCategory = function(category) {
     if (confirm("Are you sure you want to delete the " + missionScope.categoryContent[category].name + " category? Any missions you've placed in this category will be retured to Unsorted missions.")) {
-      //move scope missions out, nuke localStorage categories
-      missionScope.categoryContent[category].forEach(function(mission) {
-        missionScope.uncategorisedMissions.push(mission);
-      })
+      //nuke localStorage category
       missionScope.categoryContent.splice(category, 1);
       w.localStorage.setItem('allCategories', JSON.stringify(missionScope.categoryContent));
       generateAllMissions();
@@ -796,6 +793,7 @@ function init() {
   }
 
   var generateAllMissions = function() {
+    let scrollPosition = w.pageYOffset;
     $(".missions-list").empty();
     if (missionScope.categoryContent.length == 0) {
       $(".missions-list").addClass("row");
@@ -895,6 +893,9 @@ function init() {
       var compiledContent = $compile(missionContent)(missionScope);
       // Put the output of the compilation in to the page using jQuery
       $('.missions-list').append(compiledContent);
+      setTimeout(() => {
+        w.scrollTo(0, scrollPosition);
+      }, 250);
 
       //now enable drag-drop for the missions!
       if (missionScope.categoryContent.length > 0) {
