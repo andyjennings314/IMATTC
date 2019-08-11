@@ -5,7 +5,7 @@
 // @author       @Chyld314
 // @match        https://mission-author-dot-betaspike.appspot.com/
 // @match        https://mission-author-dot-betaspike.appspot.com/edit*
-// @require      https://code.jquery.com/ui/1.10.4/jquery-ui.min.js
+// @require      https://cdn.jsdelivr.net/npm/jquery-ui-sortable@1.0.0/jquery-ui.min.js
 // @grant        none
 // @downloadURL	 https://github.com/andyjennings314/IMATTC/raw/master/IMATTC.user.js
 // @updateURL	 https://github.com/andyjennings314/IMATTC/raw/master/IMATTC.user.js
@@ -962,19 +962,20 @@ function init() {
     var sapMissions = w.$filter('filter')(missionScope.missions, {missionListState: "SUBMITTED_AND_PUBLISHED"}, true).length;
     var publishedMissions = w.$filter('filter')(missionScope.missions, {missionListState: "PUBLISHED"}, true).length;
     var remainder = 150 - (dopMissions + submittedMissions + sapMissions + publishedMissions);
-    buttonContent += "<h4 style='line-height: 2;'>";
-    remainder > 0 && (buttonContent += "<span class='label'>"+remainder+" missions remaining</span> ");
-    draftMissions > 0 && (buttonContent += "<span class='label mission-list-item-draft'>"+draftMissions+" unpublished drafts</span> ");
-    submittedMissions > 0 && (buttonContent += "<span class='label mission-list-item-submitted'>"+submittedMissions+" under review</span> ");
-    dopMissions > 0 && (buttonContent += "<span class='label mission-list-item-draft_of_published_mission'>"+dopMissions+" being amended</span> ");
-    sapMissions > 0 && (buttonContent += "<span class='label mission-list-item-submitted_and_published'>"+sapMissions+" changes under review</span> ");
-    publishedMissions > 0 && (buttonContent += "<span class='label mission-list-item-published'>"+publishedMissions+" published</span>");
-    buttonContent += "</h4>"
+    buttonContent += "<div class='progress'>";
+    draftMissions > 0 && (buttonContent += "<div class='progress-bar mission-list-item-draft' style='width: " + Math.trunc(draftMissions / 1.5) +"%' data-toggle='tooltip' data-placement='bottom' title='"+draftMissions+" unpublished drafts'>[ "+draftMissions+" ]</div> ");
+    submittedMissions > 0 && (buttonContent += "<div class='progress-bar mission-list-item-submitted' style='width: " + Math.trunc(submittedMissions / 1.5) +"%' data-toggle='tooltip' data-placement='bottom' title='"+submittedMissions+" under review'>[ "+submittedMissions+" ]</div> ");
+    dopMissions > 0 && (buttonContent += "<div class='progress-bar mission-list-item-draft_of_published_mission' style='width: " + Math.trunc(dopMissions / 1.5) +"%' data-toggle='tooltip' data-placement='bottom' title='"+dopMissions+" being amended'>[ "+dopMissions+" ]</div> ");
+    sapMissions > 0 && (buttonContent += "<div class='progress-bar mission-list-item-submitted_and_published' style='width: " + Math.trunc(sapMissions / 1.5) +"%' data-toggle='tooltip' data-placement='bottom' title='"+sapMissions+" changes under review'>[ "+sapMissions+" ]</div> ");
+    publishedMissions > 0 && (buttonContent += "<div class='progress-bar mission-list-item-published' style='width: " + Math.trunc(publishedMissions / 1.5) +"%' data-toggle='tooltip' data-placement='bottom' title='"+publishedMissions+" published'>[ "+publishedMissions+" ]</div>");
+    remainder > 0 && (buttonContent += "<div class='progress-bar' style='width: " + Math.trunc(remainder / 1.5) +"%' data-toggle='tooltip' data-placement='bottom' title='"+remainder+" missions remaining'>[ "+remainder+" ]</div> ");
+    buttonContent += "</div>"
     buttonContent += "</div>";
     // Pass our fragment content to $compile, and call the function that $compile returns with the scope.
     var compiledContent = $compile(buttonContent)(missionScope);
     // Put the output of the compilation in to the page using jQuery
     $('.list').prepend(compiledContent);
+    $('[data-toggle="tooltip"]').tooltip();
   });
   $('.list .bordered-panel').prepend($('.list div:not(.bordered-panel) button.yellow.create-mission-button'));
 
