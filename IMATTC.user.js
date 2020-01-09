@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         IMATTC
-// @version      1.7.1
+// @version      1.7.2
 // @description  A usability overhaul for the Ingress Mission Authoring Tool
 // @author       @Chyld314
 // @match        https://mission-author-dot-betaspike.appspot.com/
