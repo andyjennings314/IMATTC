@@ -696,17 +696,14 @@ function init() {
     ];
     missionScope.sortCriteria.push("");
     var sortContent = "<select style='width: 50%; display: inline-block; margin: 5px 0;' class='form-control' ng-model='sortCriteria[";
-      switch(category){
-        case "all":
-          sortContent += "0";
-          break;
-        case "unsorted":
-          sortContent += missionScope.categoryContent.length;
-          break;
-        default:
-          sortContent += category;
-          break;
-      }
+    //object literal switch for sort parameter
+    let parameterLiteral = {
+      "all" : "0",
+      "unsorted" : missionScope.categoryContent.length,
+      "default" : category,
+    }
+    sortContent += parameterLiteral[category] || parameterLiteral["default"];
+    
     sortContent += "]' ng-change='sortCategory("+(Number.isInteger(category)? category : "\""+category+"\"")+")' >";
     sortContent += "<option value=''>Sort"+(Number.isInteger(category)? " category" : "" )+" by...</option>";
     for (var i = 0; i < criteria.length; i++) {
@@ -717,63 +714,51 @@ function init() {
   }
 
   var generateMission = function(mission, id, selectedCategory) {
-    var missionState = mission.missionListState.toLowerCase();
-    var newMissionCode = "<div class='missionbox col-xs-12 col-sm-6 col-md-3'><div class='mission mission-list-item-" + missionState + "'>"
+    let missionState = mission.missionListState.toLowerCase();
+    let newMissionCode = "<div class='missionbox col-xs-12 col-sm-6 col-md-3'><div class='mission mission-list-item-" + missionState + "'>"
       + "<div class='mission-header-container'><div>"
       + "<img class='mission-image' src='" + (mission.definition.logo_url ? mission.definition.logo_url + "=s60-c" : "/images/button_logo.png") + "'>"
       + "</div><div>"
       + "<span class='name mission-title-" + missionState + "'>" + mission.definition.name + "</span>"
       + "</div><div>"
       + "<i class='name mission-title-" + missionState + " glyphicon glyphicon-";
-    switch (missionState) {
-      case "draft":
-        newMissionCode += "wrench' title='Unpublished draft mission'";
-        break;
-      case "draft_of_published_mission":
-        newMissionCode += "wrench' title='Published mission with unpublished edits'";
-        break;
-      case "published":
-        newMissionCode += "ok' title='Published mission'";
-        break;
-      case "submitted":
-        newMissionCode += "time' title='Unpublished mission under review'";
-        break;
-      case "submitted_and_published":
-        newMissionCode += "time' title='Published mission, changes under review'";
-        break;
-    }
+      
+    //object literal switch for which icon to show
+    let iconLiteral = {
+      "draft" : "wrench' title='Unpublished draft mission'",
+      "draft_of_published_mission" : "wrench' title='Published mission with unpublished edits'",
+      "published" : "ok' title='Published mission'",
+      "submitted" : "time' title='Unpublished mission under review'",
+      "submitted_and_published" : "time' title='Published mission, changes under review'",
+    };
+    newMissionCode +=iconLiteral[missionState];
+
     newMissionCode += "></i>"
       + "</div></div>"
       + "<span class='name mission-time-" + missionState + "'>" + missionScope.getInfoTime(mission) + "</span>"
       + "<table class='table table-bordered'";
-    if (!mission.stats) {
-      newMissionCode += " style='width: 20%;' ";
-    }
+    !mission.stats && (newMissionCode += " style='width: 20%;' ");
     newMissionCode += "><tr><td>";
-    switch (mission.definition.mission_type) {
-      case "SEQUENTIAL":
-        newMissionCode += "<i class='glyphicon glyphicon-arrow-right' title='Sequential waypoints'></i>";
-        break;
-      case "HIDDEN_SEQUENTIAL":
-        newMissionCode += "<i class='glyphicon glyphicon-eye-close' title='Hidden sequential waypoints'></i>";
-        break;
-      case "NON_SEQUENTIAL":
-        newMissionCode += "<i class='glyphicon glyphicon-random' title='Non-linear waypoints (should not be used if the mission is part of a banner)'></i>";
-        break;
-    }
+    
+    //object literal switch for mission type
+    let mtypeLiteral = {
+      "SEQUENTIAL" : "<i class='glyphicon glyphicon-arrow-right' title='Sequential waypoints'></i>",
+      "HIDDEN_SEQUENTIAL" : "<i class='glyphicon glyphicon-eye-close' title='Hidden sequential waypoints'></i>",
+      "NON_SEQUENTIAL" : "<i class='glyphicon glyphicon-random' title='Non-linear waypoints (should not be used if the mission is part of a banner)'></i>",
+    };
+    newMissionCode += mtypeLiteral[mission.definition.mission_type];
+    
     newMissionCode += "</td>";
-    if (mission.stats) {
+    mission.stats && (
       newMissionCode += "<td><i class='glyphicon glyphicon-time'></i> " + missionScope.getMissionTimeString(mission) + "</td>"
         + "<td><i class='glyphicon glyphicon-thumbs-up'></i> " + missionScope.getMissionRatingString(mission) + "</td>"
-        + "<td><i class='glyphicon glyphicon-user'></i> " + mission.stats.num_completed + "</td>";
-    }
+        + "<td><i class='glyphicon glyphicon-user'></i> " + mission.stats.num_completed + "</td>"
+    )
     newMissionCode += "</tr></table>"
       + "<div class='dropup'><button class='button action-button dropdown-toggle' type='button' id='dropdownMenu1' data-toggle='dropdown' aria-haspopup='true' aria-expanded='true'>Perform Mission Action</button>"
       + "<ul class='dropdown-menu' aria-labelledby='dropdownMenu1'>";
-    if (missionScope.getButton1Title(mission))
-      newMissionCode += "<li><a role='button' ng-click='button1Clicked(missions[" + id + "])'>" + missionScope.getButton1Title(mission) + "</a></li>";
-    if (missionScope.getButton2Title(mission))
-      newMissionCode += "<li><a role='button' ng-click='button2Clicked(missions[" + id + "])'>" + missionScope.getButton2Title(mission) + "</a></li>";
+    missionScope.getButton1Title(mission) && (newMissionCode += "<li><a role='button' ng-click='button1Clicked(missions[" + id + "])'>" + missionScope.getButton1Title(mission) + "</a></li>");
+    missionScope.getButton2Title(mission) && (newMissionCode += "<li><a role='button' ng-click='button2Clicked(missions[" + id + "])'>" + missionScope.getButton2Title(mission) + "</a></li>");
     newMissionCode += "<li role='separator' class='divider'></li>";
     //if mission is live, link to mission in Ingress intel and MAT preview thing
     if (missionState != "draft" && missionState != "submitted") {
@@ -795,9 +780,7 @@ function init() {
   var generateAllMissions = function() {
     let scrollPosition = w.pageYOffset;
     $(".missions-list").empty();
-    if (missionScope.categoryContent.length == 0) {
-      $(".missions-list").addClass("row");
-    }
+    missionScope.categoryContent.length == 0 && ($(".missions-list").addClass("row"));
     missionScope.sortCriteria = [];
     w.$injector.invoke(function($compile) {
       var missionContent = "";
@@ -825,9 +808,9 @@ function init() {
 
         //then get the categories sorted
         missionScope.categoryContent.forEach(function(category) {
-            if (category.sortCriteria != 'initial') {missionScope.categorisedMissions[category.id] = w.$filter("orderBy")(missionScope.categorisedMissions[category.id], category.sortCriteria);}
+            category.sortCriteria != 'initial' && (missionScope.categorisedMissions[category.id] = w.$filter("orderBy")(missionScope.categorisedMissions[category.id], category.sortCriteria));
         })
-        if (missionScope.uncategorisedSort != 'initial') {missionScope.uncategorisedMissions = w.$filter("orderBy")(missionScope.uncategorisedMissions, missionScope.uncategorisedSort);}
+        missionScope.uncategorisedSort != 'initial' && (missionScope.uncategorisedMissions = w.$filter("orderBy")(missionScope.uncategorisedMissions, missionScope.uncategorisedSort));
 
         //once all the categorisation is done, create the HTML for the categories!
         missionContent += "<div class='panel-group' id='accordion' role='tablist' aria-multiselectable='true' style='width: 100%'>";
@@ -848,8 +831,14 @@ function init() {
             var bannerModal = "<div class='modal fade' id='previewBanner" + i + "' tabindex='-1' role='dialog'><div class='modal-dialog modal-lg' role='document'><div class='modal-content banner-preview'><div class='modal-header'><button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button><h4 class='modal-title'>Preview \"" + missionScope.categoryContent[i].collapse + "\"</h4></div><div class='modal-body'><div class='row'>";
             for (var j = 0; j < missionScope.categoryContent[i].missions.length; j++) {
               var mission = missionScope.categorisedMissions[i][j];
-              missionContent += generateMission(mission, mission.position, i);
-              bannerModal += "<div class='col-xs-2'><img class='img-responsive' src='" + (mission.definition.logo_url ? mission.definition.logo_url : "/images/button_logo.png") + "' /></div>";
+              if (mission == undefined){
+                missionScope.categoryContent[i].missions.splice(j,1);
+                j--;
+                w.localStorage.setItem('allCategories', JSON.stringify(missionScope.categoryContent));
+              } else {
+                missionContent += generateMission(mission, mission.position, i);
+                bannerModal += "<div class='col-xs-2'><img class='img-responsive' src='" + (mission.definition.logo_url ? mission.definition.logo_url : "/images/button_logo.png") + "' /></div>";
+              }
             }
             bannerModal += "</div></div></div></div></div>";
             missionContent += bannerModal;
