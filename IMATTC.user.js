@@ -831,8 +831,14 @@ function init() {
             var bannerModal = "<div class='modal fade' id='previewBanner" + i + "' tabindex='-1' role='dialog'><div class='modal-dialog modal-lg' role='document'><div class='modal-content banner-preview'><div class='modal-header'><button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button><h4 class='modal-title'>Preview \"" + missionScope.categoryContent[i].collapse + "\"</h4></div><div class='modal-body'><div class='row'>";
             for (var j = 0; j < missionScope.categoryContent[i].missions.length; j++) {
               var mission = missionScope.categorisedMissions[i][j];
-              missionContent += generateMission(mission, mission.position, i);
-              bannerModal += "<div class='col-xs-2'><img class='img-responsive' src='" + (mission.definition.logo_url ? mission.definition.logo_url : "/images/button_logo.png") + "' /></div>";
+              if (mission == undefined){
+                missionScope.categoryContent[i].missions.splice(j,1);
+                j--;
+                w.localStorage.setItem('allCategories', JSON.stringify(missionScope.categoryContent));
+              } else {
+                missionContent += generateMission(mission, mission.position, i);
+                bannerModal += "<div class='col-xs-2'><img class='img-responsive' src='" + (mission.definition.logo_url ? mission.definition.logo_url : "/images/button_logo.png") + "' /></div>";
+              }
             }
             bannerModal += "</div></div></div></div></div>";
             missionContent += bannerModal;
