@@ -1,10 +1,14 @@
 // ==UserScript==
 // @name         IMATTC
-// @version      1.7.1
+// @version      1.7.2
 // @description  A usability overhaul for the Ingress Mission Authoring Tool
 // @author       @Chyld314
 // @match        https://mission-author-dot-betaspike.appspot.com/
 // @match        https://mission-author-dot-betaspike.appspot.com/edit*
+// @match        http://missions.ingress.com/
+// @match        http://missions.ingress.com/edit*
+// @match        https://missions.ingress.com/
+// @match        https://missions.ingress.com/edit*
 // @require      https://code.jquery.com/ui/1.10.4/jquery-ui.min.js
 // @grant        none
 // @downloadURL	 https://github.com/andyjennings314/IMATTC/raw/master/IMATTC.user.js
