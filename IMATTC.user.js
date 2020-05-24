@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         IMATTC
-// @version      1.7.3
+// @version      1.7.4
 // @description  A usability overhaul for the Ingress Mission Authoring Tool
 // @author       @Chyld314
 // @match        https://mission-author-dot-betaspike.appspot.com/
@@ -397,10 +397,10 @@ function init() {
       angular.forEach(missions, function(mission) {
         if (mission.missionListState != "DRAFT" && mission.missionListState != "SUBMITTED"){
           var mId = mission.mission_guid;
-          missionPromises.push($http.post("https://mission-author-dot-betaspike.appspot.com/api/author/getMissionForProfile", {mission_guid: mId}));
+          missionPromises.push($http.post(window.origin + "/api/author/getMissionForProfile", {mission_guid: mId}));
         } else {
           var mId = mission.draft_mission_id;
-          missionPromises.push($http.post("https://mission-author-dot-betaspike.appspot.com/api/author/getMission", {mission_id: mId}));
+          missionPromises.push($http.post(window.origin + "/api/author/getMission", {mission_id: mId}));
         }
       });
       w.$q.all(missionPromises).then(function(results) {
@@ -707,7 +707,7 @@ function init() {
       "default" : category,
     }
     sortContent += parameterLiteral[category] || parameterLiteral["default"];
-    
+
     sortContent += "]' ng-change='sortCategory("+(Number.isInteger(category)? category : "\""+category+"\"")+")' >";
     sortContent += "<option value=''>Sort"+(Number.isInteger(category)? " category" : "" )+" by...</option>";
     for (var i = 0; i < criteria.length; i++) {
@@ -726,7 +726,7 @@ function init() {
       + "<span class='name mission-title-" + missionState + "'>" + mission.definition.name + "</span>"
       + "</div><div>"
       + "<i class='name mission-title-" + missionState + " glyphicon glyphicon-";
-      
+
     //object literal switch for which icon to show
     let iconLiteral = {
       "draft" : "wrench' title='Unpublished draft mission'",
@@ -743,7 +743,7 @@ function init() {
       + "<table class='table table-bordered'";
     !mission.stats && (newMissionCode += " style='width: 20%;' ");
     newMissionCode += "><tr><td>";
-    
+
     //object literal switch for mission type
     let mtypeLiteral = {
       "SEQUENTIAL" : "<i class='glyphicon glyphicon-arrow-right' title='Sequential waypoints'></i>",
@@ -751,7 +751,7 @@ function init() {
       "NON_SEQUENTIAL" : "<i class='glyphicon glyphicon-random' title='Non-linear waypoints (should not be used if the mission is part of a banner)'></i>",
     };
     newMissionCode += mtypeLiteral[mission.definition.mission_type];
-    
+
     newMissionCode += "</td>";
     mission.stats && (
       newMissionCode += "<td><i class='glyphicon glyphicon-time'></i> " + missionScope.getMissionTimeString(mission) + "</td>"
