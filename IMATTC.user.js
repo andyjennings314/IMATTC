@@ -399,7 +399,7 @@ function init() {
           var mId = mission.mission_guid;
           missionPromises.push($http.post(window.origin + "/api/author/getMissionForProfile", {mission_guid: mId}));
         } else {
-          var mId = mission.draft_mission_id;
+          var mId = mission.draft_mission_id || mission.submitted_mission_id;
           missionPromises.push($http.post(window.origin + "/api/author/getMission", {mission_id: mId}));
         }
       });
