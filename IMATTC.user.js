@@ -397,10 +397,10 @@ function init() {
       angular.forEach(missions, function(mission) {
         if (mission.missionListState != "DRAFT" && mission.missionListState != "SUBMITTED"){
           var mId = mission.mission_guid;
-          missionPromises.push($http.post("https://mission-author-dot-betaspike.appspot.com/api/author/getMissionForProfile", {mission_guid: mId}));
+          missionPromises.push($http.post(window.origin + "/api/author/getMissionForProfile", {mission_guid: mId}));
         } else {
           var mId = mission.draft_mission_id || mission.submitted_mission_id;
-          missionPromises.push($http.post("https://mission-author-dot-betaspike.appspot.com/api/author/getMission", {mission_id: mId}));
+          missionPromises.push($http.post(window.origin + "/api/author/getMission", {mission_id: mId}));
         }
       });
       w.$q.all(missionPromises).then(function(results) {
