@@ -954,7 +954,7 @@ function init() {
     var submittedMissions = w.$filter('filter')(missionScope.missions, {missionListState: "SUBMITTED"}, true).length;
     var sapMissions = w.$filter('filter')(missionScope.missions, {missionListState: "SUBMITTED_AND_PUBLISHED"}, true).length;
     var publishedMissions = w.$filter('filter')(missionScope.missions, {missionListState: "PUBLISHED"}, true).length;
-    var remainder = 150 - (dopMissions + submittedMissions + sapMissions + publishedMissions);
+    var remainder = 180 - (dopMissions + submittedMissions + sapMissions + publishedMissions);
     buttonContent += "<h4 style='line-height: 2;'>";
     remainder > 0 && (buttonContent += "<span class='label'>"+remainder+" missions remaining</span> ");
     draftMissions > 0 && (buttonContent += "<span class='label mission-list-item-draft'>"+draftMissions+" unpublished drafts</span> ");
