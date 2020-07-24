@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         IMATTC
-// @version      1.7.3
+// @version      1.7.4
 // @description  A usability overhaul for the Ingress Mission Authoring Tool
 // @author       @Chyld314
 // @match        https://mission-author-dot-betaspike.appspot.com/
@@ -399,7 +399,7 @@ function init() {
           var mId = mission.mission_guid;
           missionPromises.push($http.post("https://mission-author-dot-betaspike.appspot.com/api/author/getMissionForProfile", {mission_guid: mId}));
         } else {
-          var mId = mission.draft_mission_id;
+          var mId = mission.draft_mission_id || mission.submitted_mission_id;
           missionPromises.push($http.post("https://mission-author-dot-betaspike.appspot.com/api/author/getMission", {mission_id: mId}));
         }
       });
@@ -707,7 +707,7 @@ function init() {
       "default" : category,
     }
     sortContent += parameterLiteral[category] || parameterLiteral["default"];
-    
+
     sortContent += "]' ng-change='sortCategory("+(Number.isInteger(category)? category : "\""+category+"\"")+")' >";
     sortContent += "<option value=''>Sort"+(Number.isInteger(category)? " category" : "" )+" by...</option>";
     for (var i = 0; i < criteria.length; i++) {
@@ -726,7 +726,7 @@ function init() {
       + "<span class='name mission-title-" + missionState + "'>" + mission.definition.name + "</span>"
       + "</div><div>"
       + "<i class='name mission-title-" + missionState + " glyphicon glyphicon-";
-      
+
     //object literal switch for which icon to show
     let iconLiteral = {
       "draft" : "wrench' title='Unpublished draft mission'",
@@ -743,7 +743,7 @@ function init() {
       + "<table class='table table-bordered'";
     !mission.stats && (newMissionCode += " style='width: 20%;' ");
     newMissionCode += "><tr><td>";
-    
+
     //object literal switch for mission type
     let mtypeLiteral = {
       "SEQUENTIAL" : "<i class='glyphicon glyphicon-arrow-right' title='Sequential waypoints'></i>",
@@ -751,7 +751,7 @@ function init() {
       "NON_SEQUENTIAL" : "<i class='glyphicon glyphicon-random' title='Non-linear waypoints (should not be used if the mission is part of a banner)'></i>",
     };
     newMissionCode += mtypeLiteral[mission.definition.mission_type];
-    
+
     newMissionCode += "</td>";
     mission.stats && (
       newMissionCode += "<td><i class='glyphicon glyphicon-time'></i> " + missionScope.getMissionTimeString(mission) + "</td>"
@@ -954,7 +954,7 @@ function init() {
     var submittedMissions = w.$filter('filter')(missionScope.missions, {missionListState: "SUBMITTED"}, true).length;
     var sapMissions = w.$filter('filter')(missionScope.missions, {missionListState: "SUBMITTED_AND_PUBLISHED"}, true).length;
     var publishedMissions = w.$filter('filter')(missionScope.missions, {missionListState: "PUBLISHED"}, true).length;
-    var remainder = 150 - (dopMissions + submittedMissions + sapMissions + publishedMissions);
+    var remainder = (w.$rootScope.user.mission_limit || 180) - (dopMissions + submittedMissions + sapMissions + publishedMissions);
     buttonContent += "<h4 style='line-height: 2;'>";
     remainder > 0 && (buttonContent += "<span class='label'>"+remainder+" missions remaining</span> ");
     draftMissions > 0 && (buttonContent += "<span class='label mission-list-item-draft'>"+draftMissions+" unpublished drafts</span> ");
