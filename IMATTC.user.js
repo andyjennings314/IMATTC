@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         IMATTC
-// @version      1.7.4
+// @version      1.8.0
 // @description  A usability overhaul for the Ingress Mission Authoring Tool
 // @author       @Chyld314
 // @match        https://mission-author-dot-betaspike.appspot.com/
@@ -399,7 +399,7 @@ function init() {
           var mId = mission.mission_guid;
           missionPromises.push($http.post(window.origin + "/api/author/getMissionForProfile", {mission_guid: mId}));
         } else {
-          var mId = mission.draft_mission_id;
+          var mId = mission.draft_mission_id || mission.submitted_mission_id;
           missionPromises.push($http.post(window.origin + "/api/author/getMission", {mission_id: mId}));
         }
       });
@@ -954,7 +954,7 @@ function init() {
     var submittedMissions = w.$filter('filter')(missionScope.missions, {missionListState: "SUBMITTED"}, true).length;
     var sapMissions = w.$filter('filter')(missionScope.missions, {missionListState: "SUBMITTED_AND_PUBLISHED"}, true).length;
     var publishedMissions = w.$filter('filter')(missionScope.missions, {missionListState: "PUBLISHED"}, true).length;
-    var remainder = 150 - (dopMissions + submittedMissions + sapMissions + publishedMissions);
+    var remainder = (w.$rootScope.user.mission_limit || 180) - (dopMissions + submittedMissions + sapMissions + publishedMissions);
     buttonContent += "<h4 style='line-height: 2;'>";
     remainder > 0 && (buttonContent += "<span class='label'>"+remainder+" missions remaining</span> ");
     draftMissions > 0 && (buttonContent += "<span class='label mission-list-item-draft'>"+draftMissions+" unpublished drafts</span> ");
