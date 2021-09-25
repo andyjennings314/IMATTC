@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         IMATTC
-// @version      1.8.0
+// @version      1.8.1
 // @description  A usability overhaul for the Ingress Mission Authoring Tool
 // @author       @Chyld314
 // @match        https://mission-author-dot-betaspike.appspot.com/
@@ -832,7 +832,7 @@ function init() {
           } else {
             missionContent += "<button class='btn btn-default'style='float: right!important;margin: 5px;' data-toggle='modal' data-target='#previewBanner" + i + "'>Preview Images</button>"
               + "<button class='btn btn-default'style='float: right!important;margin: 5px;' ng-click='previewBanner(" + i + ")' data-toggle='modal' data-target='#previewMissionModel'>Preview Route</button></div>";
-            var bannerModal = "<div class='modal fade' id='previewBanner" + i + "' tabindex='-1' role='dialog'><div class='modal-dialog modal-lg' role='document'><div class='modal-content banner-preview'><div class='modal-header'><button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button><h4 class='modal-title'>Preview \"" + missionScope.categoryContent[i].collapse + "\"</h4></div><div class='modal-body'><div class='row'>";
+            var bannerModal = "<div class='modal fade' id='previewBanner" + i + "' tabindex='-1' role='dialog'><div class='modal-dialog modal-lg' role='document'><div class='modal-content banner-preview'><div class='modal-header'><button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button><h4 class='modal-title'>Preview \"" + missionScope.categoryContent[i].name + "\"</h4></div><div class='modal-body'><div class='row'>";
             for (var j = 0; j < missionScope.categoryContent[i].missions.length; j++) {
               var mission = missionScope.categorisedMissions[i][j];
               if (mission == undefined){
